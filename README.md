@@ -20,7 +20,7 @@
   - Get Timestamp
   - Get Total Frames
   
-#Problems
+# Problems
 - Is read-only, failed to replicate signature system
 - Cannot render frames or thumbnail
 - Cannot process frames metadata
