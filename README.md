@@ -1,7 +1,7 @@
 # PPMLib
 (Scrapped) .NET Library to edit Flipnotes
 
-Currently Able:
+# Currently Able
 - Metadata
   - Get Current Author
   - Get Current Author ID
@@ -20,7 +20,10 @@ Currently Able:
   - Get Timestamp
   - Get Total Frames
   
-Problems:
+#Problems
 - Is read-only, failed to replicate signature system
 - Cannot render frames or thumbnail
 - Cannot process frames metadata
+
+# Notes
+If this is edited/forked to make it not read-only anymore, make sure it follows sudomemo's TOS. (i am not responsible for anyone's fork, if i edit PPMLib it will only be on here)
