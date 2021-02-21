@@ -173,13 +173,9 @@ Public Class PPMFile
                 Dim pixels = br.ReadByte()
                 For i As Integer = 0 To 7
                     If layer = 1 Then
-                        'INSTANT VB WARNING: An assignment within expression was extracted from the following statement:
-                        'ORIGINAL LINE: fd.Layer1[line, y++] = ((pixels >> i) & 1) == 1;
                         frame.Layer1.Pixels(line, y) = ((pixels >> i) And 1) = 1
                         y += 1
                     Else
-                        'INSTANT VB WARNING: An assignment within expression was extracted from the following statement:
-                        'ORIGINAL LINE: fd.Layer2[line, y++] = ((pixels >> i) & 1) == 1;
                         frame.Layer2.Pixels(line, y) = ((pixels >> i) And 1) = 1
                         y += 1
                     End If
