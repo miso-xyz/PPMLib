@@ -1,5 +1,15 @@
 # PPMLib
-(Scrapped) .NET Library to edit Flipnotes
+(Revived) .NET Library to edit Flipnotes
+
+PS: This project uses a lot of code from FlipnoteDesktop, it has been converted to VB.NET and optimised. Thanks to [NotImplementedLife](https://github.com/NotImplementedLife) for his help with this project aswell as making FlipnoteDesktop.
+
+# Changelog
+v0.2a:
+```
+- Can now sign (private key will not be given), however no editing features have been implemented yet
+- Frame & thumbnail rendering are still in their early stages (frames currently still cannot render, thumbnails however appear broken)
+- Imporvements in the properties placements
+```
 
 # Currently Able
 - Metadata
@@ -21,9 +31,8 @@
   - Get Total Frames
   
 # Problems
-- Is read-only, failed to replicate signature system
 - Cannot render frames or thumbnail
 - Cannot process frames metadata
 
 # Notes
-If this is edited/forked to make it not read-only anymore, make sure it follows sudomemo's TOS. (i am not responsible for anyone's fork, if i edit PPMLib it will only be on here)
+- This is a library, not responsible for any tools using PPMLib that does not follow Sudomemo's TOS or sum idk, im just not responsible for what you do with PPMLib thats all
