@@ -1,6 +1,8 @@
 # PPMLib
 (Revived) .NET Library to edit Flipnotes
 
+**_Important_:** *Please check the notes below before using this softwarre.*
+
 PS: This project uses a lot of code from FlipnoteDesktop, it has been converted to VB.NET and optimised. Thanks to [NotImplementedLife](https://github.com/NotImplementedLife) for his help with this project aswell as making FlipnoteDesktop.
 
 No releases will be made until a stable version of PPMLib is published.
@@ -37,4 +39,4 @@ v0.2a:
 - Cannot process frames metadata
 
 # Notes
-- This is a library, not responsible for any tools using PPMLib that does not follow Sudomemo's TOS or sum idk, im just not responsible for what you do with PPMLib thats all
+- This is a library, not responsible for any tools using PPMLib that does not follow Sudomemo's TOS or sum idk, im just not responsible for what you do with PPMLib. We remind Section 4.1.1 from Sudomemo Terms of Use: *``` The following activities are prohibited when using Sudomemo: Exploits or content that wasn’t created in the original Flipnote Studio software on a Nintendo DSi or Nintendo 3DS```*. Plus, animating on a DS is much more fun :) . That's all

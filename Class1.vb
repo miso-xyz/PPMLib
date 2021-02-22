@@ -56,13 +56,13 @@ Public Class PPMFile
             ParentFilename = Encoding.Default.GetString(br.ReadBytes(18))
             CurrentFilename = Encoding.Default.GetString(br.ReadBytes(18))
             RootAuthorID = br.ReadBytes(8)
-            RootFilenameFragment = Encoding.Default.GetString(br.ReadBytes(18))
+            RootFilenameFragment = Encoding.Default.GetString(br.ReadBytes(8))
             Timestamp = br.ReadUInt32()
             br.ReadUInt16() 'Metadata._0x9E = 
             _rawThumbnail = br.ReadBytes(1536)
             FrameOffsetTableSize = br.ReadUInt16()
-            br.ReadUInt16() 'AnimationHeader._06A2 =
-            AnimationFlags = br.ReadUInt32()
+            br.ReadUInt32() '0x6A2 - always 0
+            AnimationFlags = br.ReadUInt16()
             br.BaseStream.Position = &H6A8
             ReDim _animationOffset(OffsetTableSize / 4)
             ReDim _frames(TotalFrames)
@@ -123,11 +123,12 @@ Public Class PPMFile
             frame._translateX = br.ReadSByte()
             frame._translateY = br.ReadSByte()
         End If
-        For x = 0 To 48
-            br.ReadByte() 'frame.Layer1.LinesEncoding(x) =
-        Next
+
+        frame.Layer1._lineEncoding = br.ReadBytes(48)
+        frame.Layer2._lineEncoding = br.ReadBytes(48)
+
         Dim enc1 As String = ""
-        For line = 0 To 192
+        For line = 0 To 191
             Dim _byte As Integer = frame.Layer1.LinesEncoding(line)
             Select Case CInt((_byte >> (line & &H3)) * 2)
                 Case 0
@@ -364,7 +365,7 @@ Public Class PPMFile
     Private _playbackSpeed As Integer
     Private _rawThumbnail As Byte()
     Private _frameOffsetTableSize As UInt16
-    Private _animationFlags As UInt32
+    Private _animationFlags As UInt16
     Private _frames As PPMFrame()
     Private _bgmtracksize As UInt32
     Private _se1tracksize As UInt32
@@ -471,6 +472,7 @@ Public Class PPMFile
             Dim offset As Integer = 0
             For ty As Integer = 0 To 47 Step 8
                 For tx As Integer = 0 To 63 Step 8
+                    bmp.SetPixel(tx, ty, Color.Red)
                     For l As Integer = 0 To 7
                         For px As Integer = 0 To 7 Step 2
                             Dim x As Integer = tx + px
@@ -482,15 +484,16 @@ Public Class PPMFile
                     Next l
                 Next tx
             Next ty
+            ' bmp.Save("result.bmp")
             Return bmp
         End Get
     End Property
 
-    Public Property AnimationFlags As UInt32
+    Public Property AnimationFlags As UInt16
         Get
             Return _animationFlags
         End Get
-        Set(ByVal value As UInt32)
+        Set(ByVal value As UInt16)
             _animationFlags = value
         End Set
     End Property
@@ -668,9 +671,10 @@ Public Class PPMLayer
     Private _pen As PenColor
     Private _visibility As Boolean
     Private _layerData(192, 256) As Boolean
-    Private _lineEncoding(48) As Byte
+    Public _lineEncoding(48) As Byte
     Public Property LinesEncoding(ByVal lineIndex As Integer) As LineEncoding
         Get
+            'MessageBox.Show("l " + _lineEncoding.Length.ToString() + " " + (lineIndex >> 2).ToString())
             Dim _byte As Integer = _lineEncoding(lineIndex >> 2)
             Dim pos As Integer = (lineIndex And &H3) * 2
             Return CType((_byte >> pos) And &H3, LineEncoding)
@@ -776,7 +780,7 @@ Public Class PPMFrame
     Private _layer1 As New PPMLayer
     Private _layer2 As New PPMLayer
     Private _paperColor As PaperColor
-    Private _frame As Bitmap
+    Private _frame As Bitmap = New Bitmap(256, 192)
     Private _animationIndex As Integer
     Public _streamPosition As Long
     Public _firstByteHeader As Byte
@@ -842,6 +846,21 @@ Public Class PPMFrame
     End Property
 
     Public Function ToBitmap() As Bitmap
+        _frame = New Bitmap(256, 192)
+        For y = 0 To 191
+            For x = 0 To 255
+                ' _frame.SetPixel(x,y)
+                If Layer2.Pixels(y, x) Then
+                    _frame.SetPixel(x, y, Color.Red)
+                Else
+                    If Layer1.Pixels(y, x) Then
+                        _frame.SetPixel(x, y, Color.Blue)
+                    Else
+                        _frame.SetPixel(x, y, If(PaperColor = PaperColor.White, Color.White, Color.Black))
+                    End If
+                End If
+            Next
+        Next
         Return _frame
     End Function
 
