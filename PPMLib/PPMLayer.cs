@@ -14,10 +14,8 @@ namespace PPMLib
 	{
 		private PenColor _pen;
 		private bool _visibility;
-		public bool[,] _layerData = new bool[193, 257];
-		public byte[] _lineEncoding = new byte[49];
-//INSTANT C# NOTE: C# does not support parameterized properties - the following property has been divided into two methods:
-//ORIGINAL LINE: Public Property LinesEncoding(ByVal lineIndex As Integer) As LineEncoding
+		public bool[,] _layerData = new bool[192, 256];
+		public byte[] _lineEncoding = new byte[48];
 		public LineEncoding LinesEncoding(int lineIndex)
 		{
 			int _byte = _lineEncoding[lineIndex >> 2];
@@ -45,7 +43,7 @@ namespace PPMLib
 				var n1 = 0;
 				for (var x_ = 0; x_ <= 8; x_++)
 				{
-					if (Pixels(index, c + x_))
+					if (this[index, c + x_])
 					{
 						n1 += 1;
 					}
@@ -57,19 +55,14 @@ namespace PPMLib
 				_0chks += (n0 == 8) ? 1 : 0;
 				_1chks += (n1 == 8) ? 1 : 0;
 			}
-//INSTANT C# NOTE: The following VB 'Select Case' included either a non-ordinal switch expression or non-ordinal, range-type, or non-constant 'Case' expressions and was converted to C# 'if-else' logic:
-//			Select Case _0chks
-//ORIGINAL LINE: Case 32
 			if (_0chks == 32)
 			{
 					return LineEncoding.SkipLine;
 			}
-//ORIGINAL LINE: Case 0 AndAlso _1chks = 0
 			else if (_0chks == ((_1chks == 0) ? -1 : 0))
 			{
 					return LineEncoding.RawLineData;
 			}
-//ORIGINAL LINE: Case Else
 			else
 			{
 					return ((_0chks > _1chks) ? LineEncoding.CodedLine : LineEncoding.InvertedCodedLine);
@@ -93,7 +86,7 @@ namespace PPMLib
 						byte chunk = 0;
 						for (var x_ = 0; x_ <= 8; x_++)
 						{
-							if (Pixels(index, 8 * x + x_))
+							if (this[index, 8 * x + x_])
 							{
 								chunk = (byte)(chunk | (byte)(1 << x_));
 							}
@@ -118,7 +111,7 @@ namespace PPMLib
 						byte chunk = 0;
 						for (var x_ = 0; x_ <= 8; x_++)
 						{
-							if (Pixels(index, 8 * x + x_))
+							if (this[index, 8 * x + x_])
 							{
 								chunk = (byte)(chunk | (byte)(1 << x_));
 							}
@@ -141,26 +134,12 @@ namespace PPMLib
 				_visibility = value;
 			}
 		}
-//INSTANT C# NOTE: C# does not support parameterized properties - the following property has been divided into two methods:
-//ORIGINAL LINE: Public Property Pixels(ByVal x As Integer, ByVal y As Integer) As Boolean
-		public bool Pixels(int x, int y)
-		{
-			return _layerData[y, x];
-		}
-			public void setPixels(int x, int y, bool value)
-			{
-				_layerData[y, x] = value;
-			}
-		public PenColor PenColor
-		{
-			get
-			{
-				return _pen;
-			}
-			set
-			{
-				_pen = value;
-			}
-		}
+
+		public bool this[int y,int x]
+        {
+			get => _layerData[y, x];
+			set => _layerData[y, x] = value;
+        }		
+		public PenColor PenColor { get; set; }		
 	}
 }

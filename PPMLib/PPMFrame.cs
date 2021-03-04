@@ -49,8 +49,8 @@ namespace PPMLib
 					{
 						break;
 					}
-					Layer1.setPixels(x, y, Layer1.Pixels(x, y) ^ frame.Layer1.Pixels(x - _translateX, y - _translateY));
-					Layer2.setPixels(x, y, Layer2.Pixels(x, y) ^ frame.Layer2.Pixels(x - _translateX, y - _translateY));
+					Layer1[y, x] = Layer1[y, x] ^ frame.Layer1[y - _translateY, x - _translateX];
+					Layer2[y, x] = Layer2[y, x] ^ frame.Layer2[y - _translateY, x - _translateX];					
 				}
 			}
 		}

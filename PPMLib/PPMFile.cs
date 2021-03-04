@@ -61,140 +61,14 @@ namespace PPMLib
                     throw new Exception("Data corrupted (possible memory pit?)");
                 }
                 br.BaseStream.Seek(offset + _animationOffset[x], SeekOrigin.Begin);
-                Frames[x] = (PPMLib.PPMFrame)ReadPPMFrameData(br);
+                Frames[x] = br.ReadPPMFrame();
                 Frames[x].AnimationIndex = Array.IndexOf(_animationOffset, _animationOffset[x]);
                 if (x > 0)
                 {
                     Frames[x].Overwrite(Frames[x - 1]);
                 }
             }
-        }
-
-		private object ReadPPMFrameData(BinaryReader br)
-		{
-			//Debug.WriteLine(br.BaseStream.Position.ToString("X8"))
-			PPMFrame frame = new PPMFrame();
-			frame._firstByteHeader = br.ReadByte();
-			if ((frame._firstByteHeader & 0x60) != 0)
-			{
-				frame._translateX = br.ReadSByte();
-				frame._translateY = br.ReadSByte();
-			}
-
-			frame.PaperColor = (PPMLib.PaperColor)(frame._firstByteHeader % 2);
-			frame.Layer1.PenColor = (PPMLib.PenColor)((frame._firstByteHeader & 0x6) >> 1);
-			frame.Layer2.PenColor = (PPMLib.PenColor)((frame._firstByteHeader & 0x18) >> 3);
-
-			frame.Layer1._lineEncoding = br.ReadBytes(0x30);
-			frame.Layer2._lineEncoding = br.ReadBytes(0x30);
-
-			for (var line = 0; line <= 191; line++)
-			{
-				switch (frame.Layer1.LinesEncoding(line))
-				{
-					case 0:
-						break;
-					case (LineEncoding)1:
-						PPMLineEncDealWith4Bytes(br, frame, 1, line);
-						break;
-					case (LineEncoding)2:
-						PPMLineEncDealWith4Bytes(br, frame, 1, line, true);
-						break;
-					case (LineEncoding)3:
-						PPMLineEncDealWithRawData(br, frame, 1, line);
-						break;
-				}
-			}
-			for (var line = 0; line <= 191; line++)
-			{
-				switch (frame.Layer2.LinesEncoding(line))
-				{
-					case (LineEncoding)1:
-						PPMLineEncDealWith4Bytes(br, frame, 2, line);
-						break;
-					case (LineEncoding)2:
-						PPMLineEncDealWith4Bytes(br, frame, 2, line, true);
-						break;
-					case (LineEncoding)3:
-						PPMLineEncDealWithRawData(br, frame, 2, line);
-						break;
-				}
-			}
-
-			return frame;
-		}
-
-		private void PPMLineEncDealWith4Bytes(BinaryReader br, PPMFrame frame, int layer, int line, bool inv = false)
-		{
-			int x = 0;
-			if (inv)
-			{
-				for (x = 0; x <= 255; x++)
-				{
-					if (layer == 1)
-					{
-						frame.Layer1.setPixels(x, line, true);
-					}
-					else
-					{
-						frame.Layer2.setPixels(x, line, true);
-					}
-				}
-			}
-			x = 0;
-			var b1 = br.ReadByte();
-			var b2 = br.ReadByte();
-			var b3 = br.ReadByte();
-			var b4 = br.ReadByte();
-			uint bytes = (uint)(((uint)b1 << 24) | ((uint)b2 << 16) | ((uint)b3 << 8) | (uint)b4);
-			while (bytes != 0)
-			{
-				if ((bytes & 0x80000000U) != 0)
-				{
-					var pixels = br.ReadByte();
-					for (int i = 0; i <= 7; i++)
-					{
-						if (layer == 1)
-						{
-							var a = ((pixels >> i) & 1) > 0;
-							frame.Layer1.setPixels(x, line, a);
-							x += 1;
-						}
-						else
-						{
-							var a = ((pixels >> i) & 1) > 0;
-							frame.Layer2.setPixels(x, line, a);
-							x += 1;
-						}
-					}
-				}
-				else
-				{
-					x += 8;
-				}
-				bytes <<= 1;
-			}
-		}
-
-		private void PPMLineEncDealWithRawData(BinaryReader br, PPMFrame frame, int layer, int line)
-		{
-			int y = 0;
-			for (var x = 0; x <= 31; x++)
-			{
-				byte val = br.ReadByte();
-				for (var x_ = 0; x_ <= 7; x_++)
-				{
-					if (layer == 1)
-					{
-						frame.Layer1.setPixels(y, line, ((((val >> x_) + 1) == 1) ? true : false));
-					}
-					else
-					{
-						frame.Layer2.setPixels(y, line, ((((val >> x_) + 1) == 1) ? true : false));
-					}
-				}
-			}
-		}
+        }	
 
 		internal static readonly char[] FileMagic = new char[4] { 'P', 'A', 'R', 'A' };
 		private uint[] _animationOffset;
