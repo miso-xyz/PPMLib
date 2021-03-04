@@ -1,18 +1,17 @@
 # PPMLib
 (Revived) .NET Library to edit Flipnotes
 
-**_Important_:** *Please check the notes below before using this softwarre.*
+**_Important_:** *Please check the notes below before using this software.*
 
-PS: This project uses a lot of code from FlipnoteDesktop, it has been converted to VB.NET and optimised. Thanks to [NotImplementedLife](https://github.com/NotImplementedLife) for his help with this project aswell as making FlipnoteDesktop.
+PS: This project uses a lot of code from FlipnoteDesktop, it has been optimised and turned into this Library. Thanks to [NotImplementedLife](https://github.com/NotImplementedLife) for his help with this project aswell as making FlipnoteDesktop.
 
 No releases will be made until a stable version of PPMLib is published.
 
 # Changelog
-v0.2a:
+v0.2b:
 ```
-- Can now sign (private key will not be given), however no editing features have been implemented yet
-- Frame & thumbnail rendering are still in their early stages (frames currently still cannot render, thumbnails however appear broken)
-- Imporvements in the properties placements
+- Translated to C#
+- Frame rendering is working
 ```
 
 # Currently Able
@@ -35,7 +34,7 @@ v0.2a:
   - Get Total Frames
   
 # Problems
-- Cannot render frames or thumbnail
+- Cannot render thumbnail
 - Cannot process frames metadata
 
 # Notes
