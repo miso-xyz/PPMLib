@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("PPMLib")]
+[assembly: AssemblyTitle("PPMTest")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("PPMLib")]
+[assembly: AssemblyProduct("PPMTest")]
 [assembly: AssemblyCopyright("Copyright ©  2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("75e6691f-5ef0-4102-9ff0-199ca0d9f7e1")]
+[assembly: Guid("cc2b38d8-029f-4b67-94a7-21e7f2dad3d8")]
 
 // Version information for an assembly consists of the following four values:
 //
