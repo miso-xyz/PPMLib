@@ -1,4 +1,4 @@
-﻿using NAudio.Wave;
+﻿
 using PPMLib;
 using System;
 using System.IO;
@@ -11,13 +11,7 @@ namespace PPMTest
     public partial class Form1 : Form
     {
 
-        WaveOut waveOut;
-        Thread t;
-        FileStream stream;
-        WaveFormat waveFormat;
-        RawSourceWaveStream rawSource;
-
-        public static readonly string Path = @"C:\Users\finti\Desktop\aa\Flipnote Encoder\DummyFlipnote";
+        public static readonly string Path = @"C:\Users\finti\Desktop\";
         public PPMFile ppm;
         public Form1()
         {
@@ -27,7 +21,6 @@ namespace PPMTest
             {
                 FileSel.Items.Add(System.IO.Path.GetFileName(fn));
             }
-            waveOut = new WaveOut();
         }
 
         public void LoadPPM(string fn)
@@ -68,16 +61,16 @@ namespace PPMTest
 
         private void PlayButton_Click(object sender, EventArgs e)
         {
-            var audio = ppm.Audio.GetWavBGM();
+            var audio = ppm.Audio.GetWavBGM(ppm);
             using (MemoryStream stream = new MemoryStream(audio))
             {
                 SoundPlayer player = new SoundPlayer(stream);
                 player.Play();
             }
 
-
-
         }
+
+
 
 
     }

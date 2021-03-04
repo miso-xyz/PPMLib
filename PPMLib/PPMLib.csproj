@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PPMLib</RootNamespace>
     <AssemblyName>PPMLib</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -62,7 +62,7 @@
     <Compile Include="PPMThumbnail.cs" />
     <Compile Include="PPMTimestamp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WavePcmFormat.cs" />
+    <Compile Include="Extensions\WavePcmFormat.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Converters\" />

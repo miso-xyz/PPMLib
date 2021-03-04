@@ -1,4 +1,9 @@
-﻿using System.IO;
+﻿using PPMLib.Extensions;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace PPMLib
 {
@@ -10,18 +15,32 @@ namespace PPMLib
 
         public PPMAudio()
         {
-
+            //Should probably initialize SoundHeader and Data here, but i'm handling it in flinote loading
+            //nobody would ever wanna make a new instance of this right?
         }
 
-        public byte[] GetWavBGM()
+        public byte[] GetWavBGM(PPMFile flip)
         {
-            AdpcmDecoder encoder = new AdpcmDecoder();
-            byte[] buffer = SoundData.RawBGM;
-            var decoded = encoder.Decode(buffer);
-            var wav = new WavePcmFormat(decoded, 1, 8192, 8);
-            File.WriteAllBytes("bruh.wav", wav.ToBytesArray());
+            // start decoding
+            AdpcmDecoder encoder = new AdpcmDecoder(flip);
+            var decoded = encoder.getAudioTrackPcm(8192 * 2);
+            byte[] output = new byte[decoded.Length];
+
+            // thank you https://github.com/meemo
+            for (int i = 0; i < decoded.Length; i += 2)
+            {
+                output[i] = (byte)(decoded[i + 1] & 0xff);
+                output[i + 1] = (byte)(decoded[i] >> 8);
+            }
+            
+            var wav = new WavePcmFormat(output, 1, 8192, 16);
+
             return wav.ToBytesArray();
+
         }
+
+        
+
     }
 
     public class _SoundHeader

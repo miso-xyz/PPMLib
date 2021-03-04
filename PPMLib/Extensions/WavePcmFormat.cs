@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace PPMLib
+namespace PPMLib.Extensions
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public class WavePcmFormat

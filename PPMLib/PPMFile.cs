@@ -67,6 +67,7 @@ namespace PPMLib
                 }
             }
 
+            // Read Sound Data
             if (SoundDataSize == 0) return;
             offset = 0x6A0 + AnimationDataSize;
             br.BaseStream.Seek(offset, SeekOrigin.Begin);
@@ -88,15 +89,18 @@ namespace PPMLib
             Audio.SoundHeader.SE1TrackSize = br.ReadUInt32();
             Audio.SoundHeader.SE2TrackSize = br.ReadUInt32();
             Audio.SoundHeader.SE3TrackSize = br.ReadUInt32();
-            Audio.SoundHeader.CurrentFramespeed = br.ReadByte();
-            Audio.SoundHeader.RecordingBGMFramespeed = br.ReadByte();
+            Audio.SoundHeader.CurrentFramespeed = (byte)(8 - br.ReadByte());
+            Audio.SoundHeader.RecordingBGMFramespeed = (byte)(8 - br.ReadByte());
+            Framerate = PPM_FRAMERATES[Audio.SoundHeader.CurrentFramespeed];
+            BGMRate = PPM_FRAMERATES[Audio.SoundHeader.RecordingBGMFramespeed];
             br.ReadBytes(14);
 
             Audio.SoundData.RawBGM = br.ReadBytes((int)Audio.SoundHeader.BGMTrackSize);
             Audio.SoundData.RawSE1 = br.ReadBytes((int)Audio.SoundHeader.SE1TrackSize);
             Audio.SoundData.RawSE2 = br.ReadBytes((int)Audio.SoundHeader.SE2TrackSize);
             Audio.SoundData.RawSE3 = br.ReadBytes((int)Audio.SoundHeader.SE3TrackSize);
-
+            
+            // Read Signature (Will implement later)
             if (br.BaseStream.Position == br.BaseStream.Length)
             {
                 // file is RSA unsigned -> do something...
@@ -132,6 +136,21 @@ namespace PPMLib
         public byte[] SoundEffectFlags;
         public PPMAudio Audio { get; private set; }
         public byte[] Signature;
+        public double Framerate { get; private set; }
+        public double BGMRate { get; private set; }
+
+        public double[] PPM_FRAMERATES = new double[]
+        {
+            30.0,
+            0.5,
+            1.0,
+            2.0,
+            4.0,
+            6.0,
+            12.0,
+            20.0,
+            30.0
+        };
 
     }
 }

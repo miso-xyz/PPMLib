@@ -10,5 +10,18 @@ namespace PPMLib.Extensions
             else if (val.CompareTo(max) > 0) return max;
             else return val;
         }
+
+        public static int NumClamp(int n, int l, int h)
+        {
+            if(n < l)
+            {
+                return l;
+            }
+            if(n > h)
+            {
+                return h;
+            }
+            return n;
+        }
     }
 }
