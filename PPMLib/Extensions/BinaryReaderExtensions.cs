@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Text;
 
 namespace PPMLib.Extensions
 {
     internal static class BinaryReaderExtensions
     {
-        public static string ReadWChars(this BinaryReader br, int count)        
-            => Encoding.Unicode.GetString(br.ReadBytes(2 * count));       
+        public static string ReadWChars(this BinaryReader br, int count)
+            => Encoding.Unicode.GetString(br.ReadBytes(2 * count));
 
-        public static PPMFilename ReadPPMFilename(this BinaryReader br)        
-            => new PPMFilename(br.ReadBytes(18));        
+        public static PPMFilename ReadPPMFilename(this BinaryReader br)
+            => new PPMFilename(br.ReadBytes(18));
 
-        public static PPMFileFragment ReadPPMFileFragment(this BinaryReader br)        
+        public static PPMFileFragment ReadPPMFileFragment(this BinaryReader br)
             => new PPMFileFragment(br.ReadBytes(8));
 
         public static PPMTimestamp ReadPPMTimestamp(this BinaryReader br)
@@ -25,56 +22,56 @@ namespace PPMLib.Extensions
 
         public static PPMFrame ReadPPMFrame(this BinaryReader br)
         {
-			PPMFrame frame = new PPMFrame();
-			frame._firstByteHeader = br.ReadByte();
-			if ((frame._firstByteHeader & 0x60) != 0)
-			{
-				frame._translateX = br.ReadSByte();
-				frame._translateY = br.ReadSByte();
-			}
+            PPMFrame frame = new PPMFrame();
+            frame._firstByteHeader = br.ReadByte();
+            if ((frame._firstByteHeader & 0x60) != 0)
+            {
+                frame._translateX = br.ReadSByte();
+                frame._translateY = br.ReadSByte();
+            }
 
-			frame.PaperColor = (PaperColor)(frame._firstByteHeader % 2);
-			frame.Layer1.PenColor = (PenColor)((frame._firstByteHeader & 0x6) >> 1);
-			frame.Layer2.PenColor = (PenColor)((frame._firstByteHeader & 0x18) >> 3);
+            frame.PaperColor = (PaperColor)(frame._firstByteHeader % 2);
+            frame.Layer1.PenColor = (PenColor)((frame._firstByteHeader & 0x6) >> 1);
+            frame.Layer2.PenColor = (PenColor)((frame._firstByteHeader & 0x18) >> 3);
 
-			frame.Layer1._lineEncoding = br.ReadBytes(0x30);
-			frame.Layer2._lineEncoding = br.ReadBytes(0x30);
+            frame.Layer1._lineEncoding = br.ReadBytes(0x30);
+            frame.Layer2._lineEncoding = br.ReadBytes(0x30);
 
-			for (var line = 0; line <= 191; line++)
-			{
-				switch (frame.Layer1.LinesEncoding(line))
-				{
-					case 0:
-						break;
-					case (LineEncoding)1:
-						PPMLineEncDealWith4Bytes(br, frame, 1, line);
-						break;
-					case (LineEncoding)2:
-						PPMLineEncDealWith4Bytes(br, frame, 1, line, true);
-						break;
-					case (LineEncoding)3:
-						PPMLineEncDealWithRawData(br, frame, 1, line);
-						break;
-				}
-			}
-			for (var line = 0; line <= 191; line++)
-			{
-				switch (frame.Layer2.LinesEncoding(line))
-				{
-					case (LineEncoding)1:
-						PPMLineEncDealWith4Bytes(br, frame, 2, line);
-						break;
-					case (LineEncoding)2:
-						PPMLineEncDealWith4Bytes(br, frame, 2, line, true);
-						break;
-					case (LineEncoding)3:
-						PPMLineEncDealWithRawData(br, frame, 2, line);
-						break;
-				}
-			}
+            for (var line = 0; line <= 191; line++)
+            {
+                switch (frame.Layer1.LinesEncoding(line))
+                {
+                    case 0:
+                        break;
+                    case (LineEncoding)1:
+                        PPMLineEncDealWith4Bytes(br, frame, 1, line);
+                        break;
+                    case (LineEncoding)2:
+                        PPMLineEncDealWith4Bytes(br, frame, 1, line, true);
+                        break;
+                    case (LineEncoding)3:
+                        PPMLineEncDealWithRawData(br, frame, 1, line);
+                        break;
+                }
+            }
+            for (var line = 0; line <= 191; line++)
+            {
+                switch (frame.Layer2.LinesEncoding(line))
+                {
+                    case (LineEncoding)1:
+                        PPMLineEncDealWith4Bytes(br, frame, 2, line);
+                        break;
+                    case (LineEncoding)2:
+                        PPMLineEncDealWith4Bytes(br, frame, 2, line, true);
+                        break;
+                    case (LineEncoding)3:
+                        PPMLineEncDealWithRawData(br, frame, 2, line);
+                        break;
+                }
+            }
 
-			return frame;
-		}
+            return frame;
+        }
 
         private static void PPMLineEncDealWith4Bytes(BinaryReader r, PPMFrame fd, int layer, int line, bool inv = false)
         {

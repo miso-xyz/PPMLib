@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace PPMLib
+﻿namespace PPMLib
 {
     public class PPMAuthor
     {
@@ -13,8 +8,8 @@ namespace PPMLib
             Id = id;
         }
 
-        public string Name { get;  }
-        public ulong Id { get;  }
+        public string Name { get; }
+        public ulong Id { get; }
 
         public override string ToString()
             => $"{Name} ({Id.ToString("X8")})";

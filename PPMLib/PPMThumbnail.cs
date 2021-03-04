@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace PPMLib
 {
@@ -18,7 +15,7 @@ namespace PPMLib
             get => _Buffer;
             set
             {
-                if(value.Length!=1536)
+                if (value.Length != 1536)
                 {
                     throw new ArgumentException("Thumbnail buffer must be 1536 bytes long");
                 }

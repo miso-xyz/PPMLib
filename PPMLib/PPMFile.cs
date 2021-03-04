@@ -1,23 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using PPMLib.Extensions;
+using System;
 using System.IO;
 using System.Linq;
-using System.Text;
-using PPMLib.Extensions;
 
 namespace PPMLib
 {
     public class PPMFile
-    {        
+    {
         public void LoadFromFile(string path)
-        {           
+        {
             Parse(File.ReadAllBytes(path));
-        }        
+        }
 
         public void Parse(byte[] bytes)
         {
             var br = new BinaryReader(new MemoryStream(bytes));
-            if (!br.ReadChars(4).SequenceEqual(FileMagic)) 
+            if (!br.ReadChars(4).SequenceEqual(FileMagic))
             {
                 throw new FileFormatException("Unexpected file format");
             }
@@ -41,7 +39,7 @@ namespace PPMLib
             RootFileFragment = br.ReadPPMFileFragment();
             Timestamp = br.ReadPPMTimestamp();
             br.ReadUInt16(); // 0x9E
-			Thumbnail = br.ReadPPMThumbnail();
+            Thumbnail = br.ReadPPMThumbnail();
             FrameOffsetTableSize = br.ReadUInt16();
             br.ReadUInt32(); //0x6A2 - always 0
             AnimationFlags = br.ReadUInt16();
@@ -68,11 +66,53 @@ namespace PPMLib
                     Frames[x].Overwrite(Frames[x - 1]);
                 }
             }
-        }	
 
-		internal static readonly char[] FileMagic = new char[4] { 'P', 'A', 'R', 'A' };
-		private uint[] _animationOffset;
-		public uint AnimationDataSize { get; private set; }        
+            if (SoundDataSize == 0) return;
+            offset = 0x6A0 + AnimationDataSize;
+            br.BaseStream.Seek(offset, SeekOrigin.Begin);
+            SoundEffectFlags = new byte[Frames.Length];
+            Audio = new PPMAudio();
+            for (int i = 0; i < Frames.Length; i++)
+            {
+                SoundEffectFlags[i] = br.ReadByte();
+            }
+            offset += Frames.Length;
+
+            // make the next offset dividable by 4
+            br.ReadBytes((int)((4 - offset % 4) % 4));
+
+            Audio.SoundData = new _SoundData();
+            Audio.SoundHeader = new _SoundHeader();
+
+            Audio.SoundHeader.BGMTrackSize = br.ReadUInt32();
+            Audio.SoundHeader.SE1TrackSize = br.ReadUInt32();
+            Audio.SoundHeader.SE2TrackSize = br.ReadUInt32();
+            Audio.SoundHeader.SE3TrackSize = br.ReadUInt32();
+            Audio.SoundHeader.CurrentFramespeed = br.ReadByte();
+            Audio.SoundHeader.RecordingBGMFramespeed = br.ReadByte();
+            br.ReadBytes(14);
+
+            Audio.SoundData.RawBGM = br.ReadBytes((int)Audio.SoundHeader.BGMTrackSize);
+            Audio.SoundData.RawSE1 = br.ReadBytes((int)Audio.SoundHeader.SE1TrackSize);
+            Audio.SoundData.RawSE2 = br.ReadBytes((int)Audio.SoundHeader.SE2TrackSize);
+            Audio.SoundData.RawSE3 = br.ReadBytes((int)Audio.SoundHeader.SE3TrackSize);
+
+            if (br.BaseStream.Position == br.BaseStream.Length)
+            {
+                // file is RSA unsigned -> do something...
+            }
+            else
+            {
+                // Next 0x80 bytes = RSA-1024 SHA-1 signature
+                Signature = br.ReadBytes(0x80);
+                // Next 0x10 bytes are filled with 0
+            }
+
+        }
+
+        internal static readonly char[] FileMagic = new char[4] { 'P', 'A', 'R', 'A' };
+        private uint[] _animationOffset;
+        public uint AnimationDataSize { get; private set; }
         public uint SoundDataSize { get; private set; }
         public ushort FrameCount { get; private set; }
         public ushort FormatVersion { get; private set; }
@@ -85,10 +125,13 @@ namespace PPMLib
         public PPMFilename CurrentFilename { get; private set; }
         public PPMFileFragment RootFileFragment { get; private set; }
         public PPMTimestamp Timestamp { get; private set; }
-		public PPMThumbnail Thumbnail { get; private set; }
+        public PPMThumbnail Thumbnail { get; private set; }
         public ushort FrameOffsetTableSize { get; private set; }
-		public ushort AnimationFlags { get; private set; }
-		public PPMFrame[] Frames { get; private set; }
+        public ushort AnimationFlags { get; private set; }
+        public PPMFrame[] Frames { get; private set; }
+        public byte[] SoundEffectFlags;
+        public PPMAudio Audio { get; private set; }
+        public byte[] Signature;
 
-	}
+    }
 }

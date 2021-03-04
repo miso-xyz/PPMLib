@@ -1,29 +1,33 @@
-﻿using PPMLib;
+﻿using NAudio.Wave;
+using PPMLib;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Media;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace PPMTest
 {
     public partial class Form1 : Form
     {
-        public static readonly string Path = @"D:\Archive\Files\Nintendo\NDS\flash\R4wood\flipnotes";
+
+        WaveOut waveOut;
+        Thread t;
+        FileStream stream;
+        WaveFormat waveFormat;
+        RawSourceWaveStream rawSource;
+
+        public static readonly string Path = @"C:\Users\finti\Desktop\aa\Flipnote Encoder\DummyFlipnote";
         public PPMFile ppm;
         public Form1()
-        {            
+        {
             InitializeComponent();
-            var ppmfiles = Directory.EnumerateFiles(Path, "*.ppm", SearchOption.TopDirectoryOnly);           
-            foreach(string fn in ppmfiles)
+            var ppmfiles = Directory.EnumerateFiles(Path, "*.ppm", SearchOption.TopDirectoryOnly);
+            foreach (string fn in ppmfiles)
             {
                 FileSel.Items.Add(System.IO.Path.GetFileName(fn));
-            }                        
+            }
+            waveOut = new WaveOut();
         }
 
         public void LoadPPM(string fn)
@@ -31,10 +35,10 @@ namespace PPMTest
             ppm = new PPMFile();
             ppm.LoadFromFile(System.IO.Path.Combine(Path, fn));
             Props.SelectedObject = ppm;
-            Thumbnail.Image = PPMRenderer.GetThumbnailBitmap(ppm.Thumbnail.Buffer); 
+            Thumbnail.Image = PPMRenderer.GetThumbnailBitmap(ppm.Thumbnail.Buffer);
             fcnt = 0;
             //for (int i = 0; i < ppm.FramesCount; i++)
-              //  ppm.Frames[i].ToBitmap().Save($"{i}.png");         */
+            //  ppm.Frames[i].ToBitmap().Save($"{i}.png");         */
         }
 
         private void FileSel_SelectedIndexChanged(object sender, EventArgs e)
@@ -45,7 +49,7 @@ namespace PPMTest
         }
 
         private void Form1_Load(object sender, EventArgs e)
-        {            
+        {
             FileSel.SelectedIndex = 0;
             //MessageBox.Show(string.Join(" ", new Filename18(ppm.ParentFilename.ToString()).Bytes.Select(x => x.ToString("X2"))));
             //MessageBox.Show(string.Join(" ", new Filename18(ppm.CurrentFilename.ToString()).Bytes.Select(x => x.ToString("X2"))));
@@ -60,5 +64,21 @@ namespace PPMTest
             if (fcnt >= ppm.FrameCount) fcnt = 0;
 
         }
+
+
+        private void PlayButton_Click(object sender, EventArgs e)
+        {
+            var audio = ppm.Audio.GetWavBGM();
+            using (MemoryStream stream = new MemoryStream(audio))
+            {
+                SoundPlayer player = new SoundPlayer(stream);
+                player.Play();
+            }
+
+
+
+        }
+
+
     }
 }

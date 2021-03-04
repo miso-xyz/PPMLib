@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace PPMLib
 {
@@ -18,7 +15,7 @@ namespace PPMLib
             get => _Buffer;
             set
             {
-                if (value.Length != 8) 
+                if (value.Length != 8)
                 {
                     throw new ArgumentException("Wrong file fragment buffer size. It should be 8 bytes long");
                 }

@@ -33,6 +33,7 @@
             this.FileSel = new System.Windows.Forms.ComboBox();
             this.FrameViewer = new System.Windows.Forms.PictureBox();
             this.NextFrameButton = new System.Windows.Forms.Button();
+            this.PlayButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.Thumbnail)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.FrameViewer)).BeginInit();
             this.SuspendLayout();
@@ -89,11 +90,22 @@
             this.NextFrameButton.UseVisualStyleBackColor = true;
             this.NextFrameButton.Click += new System.EventHandler(this.NextFrameButton_Click);
             // 
+            // PlayButton
+            // 
+            this.PlayButton.Location = new System.Drawing.Point(114, 328);
+            this.PlayButton.Name = "PlayButton";
+            this.PlayButton.Size = new System.Drawing.Size(75, 23);
+            this.PlayButton.TabIndex = 5;
+            this.PlayButton.Text = "Play Audio";
+            this.PlayButton.UseVisualStyleBackColor = true;
+            this.PlayButton.Click += new System.EventHandler(this.PlayButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.PlayButton);
             this.Controls.Add(this.NextFrameButton);
             this.Controls.Add(this.FrameViewer);
             this.Controls.Add(this.FileSel);
@@ -115,6 +127,7 @@
         private System.Windows.Forms.PropertyGrid Props;
         private System.Windows.Forms.PictureBox FrameViewer;
         private System.Windows.Forms.Button NextFrameButton;
+        private System.Windows.Forms.Button PlayButton;
     }
 }
 
