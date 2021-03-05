@@ -19,11 +19,11 @@ namespace PPMLib
             //nobody would ever wanna make a new instance of this right?
         }
 
-        public byte[] GetWavBGM(PPMFile flip)
+        public byte[] GetWavBGM(PPMFile flip, PPMAudioTrack track)
         {
             // start decoding
             AdpcmDecoder encoder = new AdpcmDecoder(flip);
-            var decoded = encoder.getAudioTrackPcm(8192 * 2);
+            var decoded = encoder.getAudioTrackPcm(8192 * 2, track);
             byte[] output = new byte[decoded.Length];
 
             // thank you https://github.com/meemo
@@ -38,8 +38,6 @@ namespace PPMLib
             return wav.ToBytesArray();
 
         }
-
-        
 
     }
 

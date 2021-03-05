@@ -52,6 +52,7 @@
     <Compile Include="PaperColor.cs" />
     <Compile Include="PenColor.cs" />
     <Compile Include="PPMAudio.cs" />
+    <Compile Include="PPMAudioTrack.cs" />
     <Compile Include="PPMAuthor.cs" />
     <Compile Include="PPMFile.cs" />
     <Compile Include="PPMFileFragment.cs" />

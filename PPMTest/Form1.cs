@@ -61,7 +61,7 @@ namespace PPMTest
 
         private void PlayButton_Click(object sender, EventArgs e)
         {
-            var audio = ppm.Audio.GetWavBGM(ppm);
+            var audio = ppm.Audio.GetWavBGM(ppm, PPMAudioTrack.BGM);
             using (MemoryStream stream = new MemoryStream(audio))
             {
                 SoundPlayer player = new SoundPlayer(stream);

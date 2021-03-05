@@ -1,5 +1,6 @@
 ﻿using PPMLib.Extensions;
 using System;
+using static PPMLib.PPMAudio;
 
 namespace PPMLib
 {
@@ -37,12 +38,27 @@ namespace PPMLib
         };
 
         /// <summary>
-        /// Get decoded audio track for the BGM. Will be expanded to sound effects soon
+        /// Get decoded audio track for a given track
         /// </summary>
+        /// <param name="track">Which type of Audio Track to decode</param>
         /// <returns>Signed 16-Bit PCM audio</returns>
-        public short[] Decode()
+        private short[] Decode(PPMAudioTrack track)
         {
-            var src = Flipnote.Audio.SoundData.RawBGM;
+            _SoundData sounds = Flipnote.Audio.SoundData;
+            byte[] src = null;
+            switch(track)
+            {
+                case PPMAudioTrack.BGM:
+                    src = sounds.RawBGM; break;
+                case PPMAudioTrack.SE1:
+                    src = sounds.RawSE1; break;
+                case PPMAudioTrack.SE2:
+                    src = sounds.RawSE2; break;
+                case PPMAudioTrack.SE3: 
+                    src = sounds.RawSE3; break;
+                default:
+                    src = sounds.RawBGM; break;
+            }
             var srcSize = src.Length;
             var dst = new short[srcSize * 2];
             var srcPtr = 0;
@@ -101,10 +117,11 @@ namespace PPMLib
         /// could probably work with different samplerates but i don't know why you'd try
         /// </summary>
         /// <param name="dstFreq"></param>
+        /// <param name="track">The type of Audio Track</param>
         /// <returns>Signed 16-Bit PCM audio</returns>
-        public short[] getAudioTrackPcm(int dstFreq)
+        public short[] getAudioTrackPcm(int dstFreq, PPMAudioTrack track)
         {
-            var srcPcm = Decode();
+            var srcPcm = Decode(track);
             var srcFreq = 8192.0;
             double soundspeed = Flipnote.BGMRate;
             double framerate = Flipnote.Framerate;
@@ -155,12 +172,17 @@ namespace PPMLib
             return dst;
         }
 
-
-        public short[] getAudioMasterPcm(PPMFile flip, int dstFreq)
+        /// <summary>
+        /// Get the full mixed audio for the Flipnote, using the specified samplerate
+        /// </summary>
+        /// <param name="flip">The Flipnote</param>
+        /// <param name="dstFreq">16384 is recommended</param>
+        /// <returns>Signed 16-bit PCM audio</returns>
+        public short[] getAudioMasterPcm(int dstFreq)
         {
-            var dstSize = Math.Ceiling((double)timeGetNoteDuration(flip.FrameCount, Flipnote.Framerate) * dstFreq);
+            var dstSize = Math.Ceiling((double)timeGetNoteDuration(Flipnote.FrameCount, Flipnote.Framerate) * dstFreq);
             var master = new short[(int)dstSize];
-            var bgmPcm = getAudioTrackPcm(dstFreq);
+            var bgmPcm = getAudioTrackPcm(dstFreq, 0);
             master = pcmAudioMix(bgmPcm, master, 0);
             return master;
         }
