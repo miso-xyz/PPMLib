@@ -91,6 +91,8 @@ namespace PPMLib
             Audio.SoundHeader.SE3TrackSize = br.ReadUInt32();
             Audio.SoundHeader.CurrentFramespeed = (byte)(8 - br.ReadByte());
             Audio.SoundHeader.RecordingBGMFramespeed = (byte)(8 - br.ReadByte());
+
+            // 
             Framerate = PPM_FRAMERATES[Audio.SoundHeader.CurrentFramespeed];
             BGMRate = PPM_FRAMERATES[Audio.SoundHeader.RecordingBGMFramespeed];
             br.ReadBytes(14);

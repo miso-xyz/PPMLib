@@ -1,30 +1,38 @@
 ﻿using PPMLib.Extensions;
 using System;
+using System.Collections.Generic;
 using static PPMLib.PPMAudio;
 
 namespace PPMLib
 {
 
-    // AdpcmDecoder heavily based on https://github.com/jaames/flipnote.js
-    // thank you jaames
+    /// <summary>
+    /// AdpcmDecoder heavily based on https://github.com/jaames/flipnote.js
+    /// thank you jaames
+    /// </summary>
     public class AdpcmDecoder
     {
         private int step_index { get; set; }
 
         private PPMFile Flipnote { get; set; }
+
+        /// <summary>
+        /// Initialize Audio Decoder
+        /// </summary>
+        /// <param name="input">The Flipnote File as input</param>
         public AdpcmDecoder(PPMFile input)
         {
             this.step_index = 0;
             this.Flipnote = input;
         }
 
-        public int[] IndexTable = new int[16]
+        private int[] IndexTable = new int[16]
         {
             -1, -1, -1, -1, 2, 4, 6, 8,
             -1, -1, -1, -1, 2, 4, 6, 8,
         };
 
-        public int[] ADPCM_STEP_TABLE = new int[]
+        private int[] ADPCM_STEP_TABLE = new int[]
         {
             7, 8, 9, 10, 11, 12, 13, 14, 16, 17,
             19, 21, 23, 25, 28, 31, 34, 37, 41, 45,
@@ -145,6 +153,13 @@ namespace PPMLib
             
         }
 
+        /// <summary>
+        /// Mixes two tracks together at the given offset
+        /// </summary>
+        /// <param name="src">The Audio to add</param>
+        /// <param name="dst">The output</param>
+        /// <param name="dstOffset">The Offset</param>
+        /// <returns>Signed 16-bit PCM audio</returns>
         private short[] pcmAudioMix(short[] src, short[] dst, int dstOffset = 0)
         {
             var srcSize = src.Length;
@@ -172,6 +187,7 @@ namespace PPMLib
             return dst;
         }
 
+
         /// <summary>
         /// Get the full mixed audio for the Flipnote, using the specified samplerate
         /// </summary>
@@ -182,17 +198,66 @@ namespace PPMLib
         {
             var dstSize = Math.Ceiling((double)timeGetNoteDuration(Flipnote.FrameCount, Flipnote.Framerate) * dstFreq);
             var master = new short[(int)dstSize];
-            var bgmPcm = getAudioTrackPcm(dstFreq, 0);
-            master = pcmAudioMix(bgmPcm, master, 0);
+            var hasBgm = Flipnote.Audio.SoundHeader.BGMTrackSize > 0;
+            var hasSe1 = Flipnote.Audio.SoundHeader.SE1TrackSize > 0;
+            var hasSe2 = Flipnote.Audio.SoundHeader.SE2TrackSize > 0;
+            var hasSe3 = Flipnote.Audio.SoundHeader.SE3TrackSize > 0;
+
+            // Mix background music
+            if (hasBgm)
+            {
+                var bgmPcm = getAudioTrackPcm(dstFreq, PPMAudioTrack.BGM);
+                master = pcmAudioMix(bgmPcm, master, 0);
+            }
+
+            if(hasSe1 || hasSe2 || hasSe3)
+            {
+                var samplesPerFrame = dstFreq / Flipnote.Framerate;
+                var se1Pcm = hasSe1 ? getAudioTrackPcm(dstFreq, PPMAudioTrack.SE1) : null;
+                var se2Pcm = hasSe1 ? getAudioTrackPcm(dstFreq, PPMAudioTrack.SE2) : null;
+                var se3Pcm = hasSe1 ? getAudioTrackPcm(dstFreq, PPMAudioTrack.SE3) : null;
+                var seFlags = Flipnote.SoundEffectFlags;
+                for(int i = 0; i < Flipnote.FrameCount; i++)
+                {
+                    var seOffset = (int)Math.Ceiling(i * samplesPerFrame);
+                    var flag = seFlags[i];
+                    if(hasSe1 && flag == 1)
+                    {
+                        master = pcmAudioMix(se1Pcm, master, seOffset);
+                    }
+                    if(hasSe2 && flag == 2)
+                    {
+                        master = pcmAudioMix(se2Pcm, master, seOffset);
+                    }
+                    if(hasSe3 && flag == 4)
+                    {
+                        master = pcmAudioMix(se3Pcm, master, seOffset);
+                    }
+                }
+            }
+
+            
             return master;
         }
 
+        /// <summary>
+        /// Returns the duration of a Flipnote
+        /// </summary>
+        /// <param name="frameCount"></param>
+        /// <param name="framerate"></param>
+        /// <returns></returns>
         public int timeGetNoteDuration(int frameCount, double framerate)
         {
             return (int)((frameCount * 100) * (1 / framerate)) / 100;
         }
 
-
+        /// <summary>
+        /// Return the sample at the specified position
+        /// </summary>
+        /// <param name="src">source audio</param>
+        /// <param name="srcSize">the size of the source</param>
+        /// <param name="srcPtr">the position</param>
+        /// <returns></returns>
         private short pcmGetSample(short[] src, int srcSize, int srcPtr)
         {
             if (srcPtr < 0 || srcPtr >= srcSize)
@@ -224,6 +289,13 @@ namespace PPMLib
             return dst;
         }
 
+        /// <summary>
+        /// Unused Linear interpolation
+        /// </summary>
+        /// <param name="src"></param>
+        /// <param name="srcFreq"></param>
+        /// <param name="dstFreq"></param>
+        /// <returns>Resampled Signed 16-bit PCM audio</returns>
         private short[] pcmResampleLinear(short[] src, double srcFreq, int dstFreq)
         {
             var srcLength = src.Length;

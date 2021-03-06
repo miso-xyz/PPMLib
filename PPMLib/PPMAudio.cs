@@ -13,17 +13,22 @@ namespace PPMLib
         public _SoundHeader SoundHeader { get; set; }
         public _SoundData SoundData { get; set; }
 
+        
         public PPMAudio()
         {
-            //Should probably initialize SoundHeader and Data here, but i'm handling it in flinote loading
-            //nobody would ever wanna make a new instance of this right?
+            
         }
 
-        public byte[] GetWavBGM(PPMFile flip, PPMAudioTrack track)
+        /// <summary>
+        /// Returns the fully mixed audio of the Flipnote, Including its Sound Effects
+        /// </summary>
+        /// <param name="flip"></param>
+        /// <returns>Signed 16-bit PCM audio</returns>
+        public byte[] GetWavBGM(PPMFile flip)
         {
             // start decoding
             AdpcmDecoder encoder = new AdpcmDecoder(flip);
-            var decoded = encoder.getAudioTrackPcm(8192 * 2, track);
+            var decoded = encoder.getAudioMasterPcm(16384);
             byte[] output = new byte[decoded.Length];
 
             // thank you https://github.com/meemo
