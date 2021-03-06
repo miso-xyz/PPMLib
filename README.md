@@ -17,7 +17,7 @@ v0.3a:
 # Currently Able
 - Metadata
   - Get Current Author
-  - Get Audio as .wav
+  - Get Audio as .wav (now including SFX)
   - Get Current Author ID
   - Get Current Filename
   - Get "Locked?"
@@ -35,7 +35,7 @@ v0.3a:
   - Get Total Frames
   
 # Problems
-- No Sound Effects
+
 
 # Notes
 - This is a library, not responsible for any tools using PPMLib that does not follow Sudomemo's TOS or sum idk, im just not responsible for what you do with PPMLib. We remind Section 4.1.1 from Sudomemo Terms of Use: *``` The following activities are prohibited when using Sudomemo: Exploits or content that wasn’t created in the original Flipnote Studio software on a Nintendo DSi or Nintendo 3DS```*. Plus, animating on a DS is much more fun :) . That's all
