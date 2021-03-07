@@ -1,7 +1,7 @@
 # PPMLib
 (Revived) .NET Library to edit Flipnotes
 
-**_Important_:** *Please check the notes below before using this softwarre.*
+**_Important_:** *Please check the notes below before using this software.*
 
 PS: This project uses a lot of code from FlipnoteDesktop, it has been converted to VB.NET and optimised. Thanks to [NotImplementedLife](https://github.com/NotImplementedLife) for his help with this project aswell as making FlipnoteDesktop.
 
