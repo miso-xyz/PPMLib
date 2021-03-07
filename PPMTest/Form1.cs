@@ -3,7 +3,6 @@ using PPMLib;
 using System;
 using System.IO;
 using System.Media;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace PPMTest
@@ -11,7 +10,9 @@ namespace PPMTest
     public partial class Form1 : Form
     {
 
+        //public static readonly string Path = @"D:\Archive\Files\Nintendo\NDS\flash\R4wood\flipnotes";
         public static readonly string Path = @"C:\Users\finti\Desktop\";
+
         public PPMFile ppm;
         public Form1()
         {
@@ -20,7 +21,7 @@ namespace PPMTest
             foreach (string fn in ppmfiles)
             {
                 FileSel.Items.Add(System.IO.Path.GetFileName(fn));
-            }
+            }            
         }
 
         public void LoadPPM(string fn)
@@ -29,9 +30,7 @@ namespace PPMTest
             ppm.LoadFromFile(System.IO.Path.Combine(Path, fn));
             Props.SelectedObject = ppm;
             Thumbnail.Image = PPMRenderer.GetThumbnailBitmap(ppm.Thumbnail.Buffer);
-            fcnt = 0;
-            //for (int i = 0; i < ppm.FramesCount; i++)
-            //  ppm.Frames[i].ToBitmap().Save($"{i}.png");         */
+            fcnt = 0;            
         }
 
         private void FileSel_SelectedIndexChanged(object sender, EventArgs e)
@@ -43,10 +42,7 @@ namespace PPMTest
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            FileSel.SelectedIndex = 0;
-            //MessageBox.Show(string.Join(" ", new Filename18(ppm.ParentFilename.ToString()).Bytes.Select(x => x.ToString("X2"))));
-            //MessageBox.Show(string.Join(" ", new Filename18(ppm.CurrentFilename.ToString()).Bytes.Select(x => x.ToString("X2"))));
-            //MessageBox.Show(ppm.ParentFilename.Bytes.Length.ToString());
+            FileSel.SelectedIndex = 0;            
         }
 
         int fcnt = 0;
@@ -70,9 +66,6 @@ namespace PPMTest
             }
 
         }
-
-
-
 
     }
 }

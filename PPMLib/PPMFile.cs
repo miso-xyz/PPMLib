@@ -7,6 +7,7 @@ namespace PPMLib
 {
     public class PPMFile
     {
+        //private static 
         public void LoadFromFile(string path)
         {
             Parse(File.ReadAllBytes(path));
@@ -77,7 +78,7 @@ namespace PPMLib
             {
                 SoundEffectFlags[i] = br.ReadByte();
             }
-            offset += Frames.Length;
+            offset += Frames.Length;            
 
             // make the next offset dividable by 4
             br.ReadBytes((int)((4 - offset % 4) % 4));

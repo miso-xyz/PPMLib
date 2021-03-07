@@ -12,6 +12,7 @@ v0.3a:
 ```
 - Restructured Library
 - Added Audio Decoding (working!)
+- Author's names are Unicode-compatible thanks to the explanation provided by [Sudofont](https://github.com/Sudomemo/Sudofont "Sudofont") [may be buggy]
 ```
 
 # Currently Able
@@ -32,10 +33,11 @@ v0.3a:
   - Get Root Filename Fragments
   - Get Thumbnail Frame Index
   - Get Timestamp
-  - Get Total Frames
+  - Get Total Frames  
   
 # Problems
 
+  - Emojis are currently not working in author names
 
 # Notes
-- This is a library, not responsible for any tools using PPMLib that does not follow Sudomemo's TOS or sum idk, im just not responsible for what you do with PPMLib. We remind Section 4.1.1 from Sudomemo Terms of Use: *``` The following activities are prohibited when using Sudomemo: Exploits or content that wasn’t created in the original Flipnote Studio software on a Nintendo DSi or Nintendo 3DS```*. Plus, animating on a DS is much more fun :) . That's all
+- This is a library, not responsible for any tools using PPMLib that does not follow Sudomemo's TOS or sum idk, I'm just not responsible for what you do with PPMLib. We remind Section 4.1.5 from Sudomemo Terms of Use: *``` The following activities are prohibited when using Sudomemo: [...] Exploits or content that wasn’t created in the original Flipnote Studio software on a Nintendo DSi or Nintendo 3DS```*. Plus, animating on a DS is much more fun :) . That's all
