@@ -7,22 +7,20 @@ namespace PPMLib
     {
         private PenColor _pen;
         private bool _visibility;
-        public bool[,] _layerData = new bool[192, 256];
-        public byte[] _lineEncoding = new byte[48];
+        internal byte[] _layerData = new byte[32 * 192];
+        //public bool[,] _layerData = new bool[192, 256];
+        internal byte[] _linesEncoding = new byte[48];
         public LineEncoding LinesEncoding(int lineIndex)
-        {
-            int _byte = _lineEncoding[lineIndex >> 2];
-            int pos = (lineIndex & 0x3) * 2;
-            return (LineEncoding)((_byte >> pos) & 0x3);
-        }
+            => (LineEncoding)((_linesEncoding[lineIndex >> 2] >> ((lineIndex & 0x3) << 1)) & 0x3);
+        
         public void setLinesEncoding(int lineIndex, LineEncoding value)
         {
             int o = lineIndex >> 2;
             int pos = (lineIndex & 0x3) * 2;
-            var b = _lineEncoding[o];
+            var b = _linesEncoding[o];
             b = (byte)(b & (byte)~(0x3 << pos));
             b = (byte)(b | (byte)((int)value << pos));
-            _lineEncoding[o] = b;
+            _linesEncoding[o] = b;
         }
         #region Line-Related Functions
         public LineEncoding SetLineEncodingForWholeLayer(int index)
@@ -127,11 +125,25 @@ namespace PPMLib
                 _visibility = value;
             }
         }
-
-        public bool this[int y, int x]
+        /*public bool this[int y, int x]
         {
             get => _layerData[y, x];
             set => _layerData[y, x] = value;
+        }*/
+
+        public bool this[int y, int x]
+        {
+            get
+            {
+                int p = 256 * y + x;
+                return (_layerData[p >> 3] & ((byte)(1 << (p & 7)))) != 0;
+            }
+            set
+            {
+                int p = 256 * y + x;
+                _layerData[p >> 3] &= (byte)(~(1 << (p & 0x7)));
+                _layerData[p >> 3] |= (byte)((value ? 1 : 0) << (p & 0x7));
+            }
         }
         public PenColor PenColor { get; set; }
     }

@@ -10,8 +10,8 @@ namespace PPMTest
     public partial class Form1 : Form
     {
 
-        //public static readonly string Path = @"D:\Archive\Files\Nintendo\NDS\flash\R4wood\flipnotes";
-        public static readonly string Path = @"C:\Users\finti\Desktop\";
+        public static readonly string Path = @"D:\Archive\Files\Nintendo\NDS\flash\R4wood\flipnotes";
+        //public static readonly string Path = @"C:\Users\finti\Desktop\";
 
         public PPMFile ppm;
         public Form1()

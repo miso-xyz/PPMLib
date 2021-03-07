@@ -72,18 +72,18 @@ namespace PPMLib
             var rect = new Rectangle(0, 0, 256, 192);
             var bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
 
-            byte[] bytes = new byte[(256 * 192) + 1];
+            byte[] bytes = new byte[256 * 192];
             var IPtr = bmpData.Scan0;
             Marshal.Copy(IPtr, bytes, 0, 256 * 192);
-            for (var y = 0; y <= 191; y++)
+            for (var y = 0; y < 192; y++)
             {
-                for (var x = 0; x <= 255; x++)
+                for (var x = 0; x < 256; x++) 
                 {
-                    if (frame.Layer2[y, x])
+                    if (frame.Layer1[y, x])
                     {
-                        if (frame.Layer2.PenColor != PenColor.Inverted)
+                        if (frame.Layer1.PenColor != PenColor.Inverted)
                         {
-                            bytes[256 * y + x] = (byte)frame.Layer2.PenColor;
+                            bytes[256 * y + x] = (byte)frame.Layer1.PenColor;
                         }
                         else
                         {
@@ -92,11 +92,11 @@ namespace PPMLib
                     }
                     else
                     {
-                        if (frame.Layer1[y, x])
+                        if (frame.Layer2[y, x])
                         {
-                            if (frame.Layer1.PenColor != PenColor.Inverted)
+                            if (frame.Layer2.PenColor != PenColor.Inverted)
                             {
-                                bytes[256 * y + x] = (byte)frame.Layer1.PenColor;
+                                bytes[256 * y + x] = (byte)frame.Layer2.PenColor;
                             }
                             else
                             {

@@ -31,96 +31,87 @@ namespace PPMLib.Extensions
             }
 
             frame.PaperColor = (PaperColor)(frame._firstByteHeader % 2);
-            frame.Layer1.PenColor = (PenColor)((frame._firstByteHeader & 0x6) >> 1);
-            frame.Layer2.PenColor = (PenColor)((frame._firstByteHeader & 0x18) >> 3);
+            frame.Layer1.PenColor = (PenColor)((frame._firstByteHeader >> 1) & 3);
+            frame.Layer2.PenColor = (PenColor)((frame._firstByteHeader >> 3) & 3);
 
-            frame.Layer1._lineEncoding = br.ReadBytes(0x30);
-            frame.Layer2._lineEncoding = br.ReadBytes(0x30);
+            frame.Layer1._linesEncoding = br.ReadBytes(0x30);
+            frame.Layer2._linesEncoding = br.ReadBytes(0x30);
 
-            for (var line = 0; line <= 191; line++)
+            for (int y = 0, yy; y < 192; y++) 
             {
-                switch (frame.Layer1.LinesEncoding(line))
+                yy = y << 5;
+                switch (frame.Layer1.LinesEncoding(y))
                 {
                     case 0:
                         break;
                     case (LineEncoding)1:
-                        PPMLineEncDealWith4Bytes(br, frame, 1, line);
+                        for (int x = 0; x < 32; x++) frame.Layer1._layerData[yy + x] = 0x00;
+                        byte b1 = br.ReadByte(), b2 = br.ReadByte(), b3 = br.ReadByte(), b4 = br.ReadByte();
+                        uint bytes = ((uint)(b1 << 24)) + ((uint)(b2 << 16)) + ((uint)(b3 << 8)) + b4;
+                        while (bytes != 0)
+                        {
+                            if ((bytes & 0x80000000) != 0)
+                                frame.Layer1._layerData[yy] = br.ReadByte();                                                           
+                            bytes <<= 1;
+                            yy++;
+                        }                        
                         break;
                     case (LineEncoding)2:
-                        PPMLineEncDealWith4Bytes(br, frame, 1, line, true);
+                        for (int x = 0; x < 32; x++) frame.Layer1._layerData[yy + x] = 0xFF;
+                        b1 = br.ReadByte(); b2 = br.ReadByte(); b3 = br.ReadByte(); b4 = br.ReadByte();
+                        bytes = ((uint)(b1 << 24)) + ((uint)(b2 << 16)) + ((uint)(b3 << 8)) + b4;
+                        while (bytes != 0)
+                        {
+                            if ((bytes & 0x80000000) != 0)
+                                frame.Layer1._layerData[yy] = br.ReadByte();
+                            bytes <<= 1;
+                            yy++;
+                        }                        
                         break;
                     case (LineEncoding)3:
-                        PPMLineEncDealWithRawData(br, frame, 1, line);
+                        for (int x = 0; x < 32; x++)
+                            frame.Layer1._layerData[yy + x] = br.ReadByte();                        
                         break;
                 }
             }
-            for (var line = 0; line <= 191; line++)
+            for (int y = 0,yy; y < 192; y++) 
             {
-                switch (frame.Layer2.LinesEncoding(line))
+                yy = y << 5;
+                switch (frame.Layer2.LinesEncoding(y))
                 {
+                    case 0:
+                        break;
                     case (LineEncoding)1:
-                        PPMLineEncDealWith4Bytes(br, frame, 2, line);
+                        for (int x = 0; x < 32; x++) frame.Layer2._layerData[yy + x] = 0x00;
+                        byte b1 = br.ReadByte(), b2 = br.ReadByte(), b3 = br.ReadByte(), b4 = br.ReadByte();
+                        uint bytes = ((uint)(b1 << 24)) + ((uint)(b2 << 16)) + ((uint)(b3 << 8)) + b4;
+                        while (bytes != 0)
+                        {
+                            if ((bytes & 0x80000000) != 0)
+                                frame.Layer2._layerData[yy] = br.ReadByte();
+                            bytes <<= 1;
+                            yy++;
+                        }                        
                         break;
                     case (LineEncoding)2:
-                        PPMLineEncDealWith4Bytes(br, frame, 2, line, true);
+                        for (int x = 0; x < 32; x++) frame.Layer2._layerData[yy + x] = 0xFF;
+                        b1 = br.ReadByte(); b2 = br.ReadByte(); b3 = br.ReadByte(); b4 = br.ReadByte();
+                        bytes = ((uint)(b1 << 24)) + ((uint)(b2 << 16)) + ((uint)(b3 << 8)) + b4;
+                        while (bytes != 0)
+                        {
+                            if ((bytes & 0x80000000) != 0)
+                                frame.Layer2._layerData[yy] = br.ReadByte();
+                            bytes <<= 1;
+                            yy++;
+                        }                        
                         break;
                     case (LineEncoding)3:
-                        PPMLineEncDealWithRawData(br, frame, 2, line);
+                        for (int x = 0; x < 32; x++)
+                            frame.Layer2._layerData[yy + x] = br.ReadByte();                        
                         break;
                 }
             }
-
             return frame;
-        }
-
-        private static void PPMLineEncDealWith4Bytes(BinaryReader r, PPMFrame fd, int layer, int line, bool inv = false)
-        {
-            int y = 0;
-            if (inv)
-            {
-                for (int i = 0; i < 256; i++)
-                    if (layer == 1)
-                        fd.Layer1[line, i] = true;
-                    else
-                        fd.Layer2[line, i] = true;
-            }
-            byte b1 = r.ReadByte(),
-                b2 = r.ReadByte(),
-                b3 = r.ReadByte(),
-                b4 = r.ReadByte();
-
-            uint bytes = ((uint)(b1 << 24)) + ((uint)(b2 << 16)) + ((uint)(b3 << 8)) + b4;
-            while (bytes != 0)
-            {
-                if ((bytes & 0x80000000) != 0)
-                {
-                    var pixels = r.ReadByte();
-                    for (int i = 0; i < 8; i++)
-                    {
-                        if (layer == 1)
-                            fd.Layer1[line, y++] = ((pixels >> i) & 1) == 1;
-                        else
-                            fd.Layer2[line, y++] = ((pixels >> i) & 1) == 1;
-                    }
-                }
-                else y += 8;
-                bytes <<= 1;
-            }
-        }
-
-        private static void PPMLineEncDealWithRawData(BinaryReader r, PPMFrame fd, int layer, int line)
-        {
-            int y = 0;
-            for (int i = 0; i < 32; i++)
-            {
-                byte val = r.ReadByte();
-                for (int b = 0; b < 8; b++)
-                    if (layer == 1)
-                        fd.Layer1[line, y++] = ((val >> b) & 1) == 1;
-                    else
-                        fd.Layer2[line, y++] = ((val >> b) & 1) == 1;
-            }
-        }
-
+        }        
     }
 }

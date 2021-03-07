@@ -21,29 +21,56 @@ namespace PPMLib
             {
                 return;
             }
-            Debug.WriteLine("Yeah");
-            for (var y = 0; y <= 191; y++)
+            int tX = frame._translateX;
+            int tY = frame._translateY;
+            //////////// < There is a mistake somewhere 
+            int ld0 = ((tX >= 0) ? (tX >> 3) : 0);
+            int pi0 = (tX >= 0) ? 0 : ((-tX) >> 3);
+            byte del = (byte)(tX >= 0 ? (tX & 7) : (((byte)(tX)) & 7));
+            if (del != 0) Debug.WriteLine(tX + " " + del);
+            byte ndel = (byte)(8 - del);
+            byte alpha = (byte)((1 << (8 - del)) - 1);
+            byte nalpha = (byte)~alpha;
+            int pi = 0, ld = 0;
+            if (tX >= 0)
             {
-                if (y - _translateY < 0)
+                for (ushort y = 0; y < 192; y++) 
                 {
-                    continue;
-                }
-                else if (y - _translateY >= 192)
-                {
-                    break;
-                }
-                for (var x = 0; x <= 255; x++)
-                {
-                    if (x - _translateX < 0)
+                    if (y < tY) continue;
+                    if (y - tY >= 192) break;
+                    ld = ((y << 5) + ld0);
+                    pi = (((y - tY) << 5) + pi0);
+                    Layer1._layerData[ld] ^= (byte)(frame.Layer1._layerData[pi] & alpha);
+                    Layer2._layerData[ld++] ^= (byte)(frame.Layer2._layerData[pi] & alpha);                    
+                    while ((ld & 31) < 31)
                     {
-                        continue;
+                        Layer1._layerData[ld] ^= (byte)(((frame.Layer1._layerData[pi] & nalpha) >> ndel) | ((frame.Layer1._layerData[pi + 1] & alpha) << del));
+                        Layer2._layerData[ld] ^= (byte)(((frame.Layer2._layerData[pi] & nalpha) >> ndel) | ((frame.Layer2._layerData[pi + 1] & alpha) << del));
+                        //layer2[ld] ^= ((layerB[pi] & nalpha) >> ndel) | ((layerB[pi + 1] & alpha) << del);
+                        ld++; pi++;
                     }
-                    else if (x - _translateX >= 256)
+                    Layer1._layerData[ld] ^= (byte)((frame.Layer1._layerData[pi] & nalpha) | (frame.Layer1._layerData[pi + 1] & alpha));
+                    Layer2._layerData[ld] ^= (byte)((frame.Layer2._layerData[pi] & nalpha) | (frame.Layer2._layerData[pi + 1] & alpha));
+                    //layer2[ld] ^= (layerB[pi] & nalpha) | (layerB[pi + 1] & alpha);
+                }
+            }
+            else
+            {
+                for (ushort y = 0; y < 192; y++) 
+                {
+                    if (y < tY) continue;
+                    if (y - tY >= 192) break;
+                    ld = ((y << 5) + ld0);
+                    pi = (((y - tY) << 5) + pi0);
+                    while ((pi & 31) < 31)
                     {
-                        break;
+                        Layer1._layerData[ld] ^= (byte)(((frame.Layer1._layerData[pi] & nalpha) >> ndel) | ((frame.Layer1._layerData[pi + 1] & alpha) << del));
+                        Layer2._layerData[ld] ^= (byte)(((frame.Layer2._layerData[pi] & nalpha) >> ndel) | ((frame.Layer2._layerData[pi + 1] & alpha) << del));                        
+                        ld++; pi++;
                     }
-                    Layer1[y, x] = Layer1[y, x] ^ frame.Layer1[y - _translateY, x - _translateX];
-                    Layer2[y, x] = Layer2[y, x] ^ frame.Layer2[y - _translateY, x - _translateX];
+                    Layer1._layerData[ld] ^= (byte)(frame.Layer1._layerData[pi] & nalpha);
+                    Layer2._layerData[ld] ^= (byte)(frame.Layer2._layerData[pi] & nalpha);
+                    //layer2[ld] ^= layerB[pi] & nalpha;
                 }
             }
         }
@@ -84,6 +111,11 @@ namespace PPMLib
             {
                 _paperColor = value;
             }
+        }
+
+        public override string ToString()
+        {
+            return _firstByteHeader.ToString("X2");
         }
     }
 }
