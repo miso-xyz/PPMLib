@@ -1,6 +1,7 @@
 ﻿using FFMpegCore;
 using FFMpegCore.Enums;
 using PPMLib.Extensions;
+using PPMLib.Winforms;
 using System;
 using System.IO;
 using System.Linq;
@@ -54,6 +55,7 @@ namespace PPMLib.Encoders
                     PPMRenderer.GetFrameBitmap(Flipnote.Frames[i]).Save($"temp/frame_{i}.png");
                 }
                 var frames = Directory.EnumerateFiles("temp").ToArray();
+
 
                 File.WriteAllBytes("temp/audio.wav", Flipnote.Audio.GetWavBGM(Flipnote));
 

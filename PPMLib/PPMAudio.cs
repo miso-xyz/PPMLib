@@ -1,5 +1,6 @@
 ﻿using NAudio.Wave;
 using PPMLib.Extensions;
+using System;
 using System.IO;
 
 namespace PPMLib
@@ -17,7 +18,8 @@ namespace PPMLib
         }
 
         /// <summary>
-        /// Returns the fully mixed audio of the Flipnote, Including its Sound Effects
+        /// Returns the fully mixed audio of the Flipnote, Including its Sound Effects.
+        /// Returns Null if no audio exists.
         /// </summary>
         /// <param name="flip"></param>
         /// <returns>Signed 16-bit PCM audio</returns>
@@ -26,19 +28,34 @@ namespace PPMLib
             // start decoding
             AdpcmDecoder encoder = new AdpcmDecoder(flip);
             var decoded = encoder.getAudioMasterPcm(32768);
-            byte[] output = new byte[decoded.Length];
-
-            // thank you https://github.com/meemo
-            for (int i = 0; i < decoded.Length; i += 2)
+            if(decoded.Length > 0)
             {
-                output[i] = (byte)(decoded[i + 1] & 0xff);
-                output[i + 1] = (byte)(decoded[i] >> 8);
-            }
+                byte[] output = new byte[decoded.Length];
 
-            var provider = new RawSourceWaveStream(new MemoryStream(output), new WaveFormat(32768/2, 16, 1));
-            var a = new MemoryStream();
-            WaveFileWriter.WriteWavFileToStream(a, provider);
-            return a.ToArray();
+                // thank you https://github.com/meemo
+                for (int i = 0; i < decoded.Length; i += 2)
+                {
+                    try
+                    {
+                        output[i] = (byte)(decoded[i + 1] & 0xff);
+                        output[i + 1] = (byte)(decoded[i] >> 8);
+                    }
+                    catch(Exception e)
+                    {
+
+                    }
+                    
+                }
+
+                
+
+                var provider = new RawSourceWaveStream(new MemoryStream(output), new WaveFormat(32768 / 2, 16, 1));
+                var a = new MemoryStream();
+                WaveFileWriter.WriteWavFileToStream(a, provider);
+                return a.ToArray();
+            }
+            return null;
+            
 
         }
 
