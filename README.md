@@ -9,11 +9,11 @@ No releases will be made until a stable version of PPMLib is published.
 
 # Changelog
 v0.3a:
-```
+<pre>
 - Restructured Library
 - Added Audio Decoding (working!)
-- Author's names are Unicode-compatible thanks to the explanation provided by [Sudofont](https://github.com/Sudomemo/Sudofont "Sudofont") [may be buggy]
-```
+- Author's names are Unicode-compatible thanks to the explanation provided by <a href="https://github.com/Sudomemo/Sudofont">Sudofont</a> [may be buggy]
+</pre>
 
 # Currently Able
 - Metadata

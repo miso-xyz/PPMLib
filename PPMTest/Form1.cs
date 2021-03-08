@@ -30,15 +30,15 @@ namespace PPMTest
             ppm = new PPMFile();
             ppm.LoadFromFile(System.IO.Path.Combine(Path, fn));
             Props.SelectedObject = ppm;
-            Thumbnail.Image = PPMRenderer.GetThumbnailBitmap(ppm.Thumbnail.Buffer);
-            fcnt = 0;
+            Thumbnail.Image = PPMLib.Winforms.PPMRenderer.GetThumbnailBitmap(ppm.Thumbnail.Buffer);
+            fcnt = 0;            
         }
 
         private void FileSel_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoadPPM(FileSel.SelectedItem as string);
             fcnt = 0;
-            FrameViewer.Image = PPMRenderer.GetFrameBitmap(ppm.Frames[fcnt]);
+            FrameViewer.Image = PPMLib.Winforms.PPMRenderer.GetFrameBitmap(ppm.Frames[fcnt]);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -49,7 +49,7 @@ namespace PPMTest
         int fcnt = 0;
         private void NextFrameButton_Click(object sender, EventArgs e)
         {
-            FrameViewer.Image = PPMRenderer.GetFrameBitmap(ppm.Frames[fcnt]);
+            FrameViewer.Image = PPMLib.Winforms.PPMRenderer.GetFrameBitmap(ppm.Frames[fcnt]);
             fcnt++;
             if (fcnt >= ppm.FrameCount) fcnt = 0;
 
