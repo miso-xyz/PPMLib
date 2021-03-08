@@ -1,9 +1,6 @@
-﻿using PPMLib.Extensions;
-using System;
-using System.Collections.Generic;
+﻿using NAudio.Wave;
+using PPMLib.Extensions;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace PPMLib
 {
@@ -13,10 +10,10 @@ namespace PPMLib
         public _SoundHeader SoundHeader { get; set; }
         public _SoundData SoundData { get; set; }
 
-        
+
         public PPMAudio()
         {
-            
+
         }
 
         /// <summary>
@@ -28,7 +25,7 @@ namespace PPMLib
         {
             // start decoding
             AdpcmDecoder encoder = new AdpcmDecoder(flip);
-            var decoded = encoder.getAudioMasterPcm(16384);
+            var decoded = encoder.getAudioMasterPcm(32768);
             byte[] output = new byte[decoded.Length];
 
             // thank you https://github.com/meemo
@@ -37,10 +34,11 @@ namespace PPMLib
                 output[i] = (byte)(decoded[i + 1] & 0xff);
                 output[i + 1] = (byte)(decoded[i] >> 8);
             }
-            
-            var wav = new WavePcmFormat(output, 1, 8192, 16);
 
-            return wav.ToBytesArray();
+            var provider = new RawSourceWaveStream(new MemoryStream(output), new WaveFormat(32768/2, 16, 1));
+            var a = new MemoryStream();
+            WaveFileWriter.WriteWavFileToStream(a, provider);
+            return a.ToArray();
 
         }
 

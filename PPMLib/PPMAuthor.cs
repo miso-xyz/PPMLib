@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace PPMLib
@@ -32,7 +31,7 @@ namespace PPMLib
             { Encoding.BigEndianUnicode.GetString(new byte[]{0xE0,0x06}), Encoding.BigEndianUnicode.GetString(new byte[]{0x27,0x95}) },
             { Encoding.BigEndianUnicode.GetString(new byte[]{0xE0,0x07}), Encoding.BigEndianUnicode.GetString(new byte[]{0x23,0xF0}) },
             // vvv emojis not working vvv
-            { Encoding.BigEndianUnicode.GetString(new byte[]{0xE0,0x08}), Encoding.BigEndianUnicode.GetString(new byte[]{0x01,0xF6,0x03}) }, 
+            { Encoding.BigEndianUnicode.GetString(new byte[]{0xE0,0x08}), Encoding.BigEndianUnicode.GetString(new byte[]{0x01,0xF6,0x03}) },
             { Encoding.BigEndianUnicode.GetString(new byte[]{0xE0,0x09}), Encoding.BigEndianUnicode.GetString(new byte[]{0x01,0xF6,0x20}) },
             { Encoding.BigEndianUnicode.GetString(new byte[]{0xE0,0x0A}), Encoding.BigEndianUnicode.GetString(new byte[]{0x01,0xF6,0x14}) },
             { Encoding.BigEndianUnicode.GetString(new byte[]{0xE0,0x0B}), Encoding.BigEndianUnicode.GetString(new byte[]{0x01,0xF6,0x11}) },
@@ -61,8 +60,8 @@ namespace PPMLib
             // not the final implementation
             // it's just to test if things are working
             foreach (var entry in CharTable)
-                str = str.Replace(entry.Key, entry.Value); 
-            return str;            
+                str = str.Replace(entry.Key, entry.Value);
+            return str;
         }
 
     }

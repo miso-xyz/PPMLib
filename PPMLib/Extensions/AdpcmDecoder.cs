@@ -1,9 +1,7 @@
-﻿using PPMLib.Extensions;
+﻿
 using System;
-using System.Collections.Generic;
-using static PPMLib.PPMAudio;
 
-namespace PPMLib
+namespace PPMLib.Extensions
 {
 
     /// <summary>
@@ -54,7 +52,7 @@ namespace PPMLib
         {
             _SoundData sounds = Flipnote.Audio.SoundData;
             byte[] src = null;
-            switch(track)
+            switch (track)
             {
                 case PPMAudioTrack.BGM:
                     src = sounds.RawBGM; break;
@@ -62,7 +60,7 @@ namespace PPMLib
                     src = sounds.RawSE1; break;
                 case PPMAudioTrack.SE2:
                     src = sounds.RawSE2; break;
-                case PPMAudioTrack.SE3: 
+                case PPMAudioTrack.SE3:
                     src = sounds.RawSE3; break;
                 default:
                     src = sounds.RawBGM; break;
@@ -116,7 +114,7 @@ namespace PPMLib
                 dst[dstPtr++] = (short)predictor;
 
             }
-            
+
             return dst;
         }
 
@@ -130,27 +128,27 @@ namespace PPMLib
         public short[] getAudioTrackPcm(int dstFreq, PPMAudioTrack track)
         {
             var srcPcm = Decode(track);
-            var srcFreq = 8192.0;
+            var srcFreq = 8192;
             double soundspeed = Flipnote.BGMRate;
             double framerate = Flipnote.Framerate;
 
-            if(Flipnote.Audio.SoundData.RawBGM.Length != 0)
+            if (track == PPMAudioTrack.BGM)
             {
-                
-                    
-                        var bgmAdjust = (1.0 / soundspeed) / (1.0 / framerate);
-                        srcFreq = (8192.0 * bgmAdjust);
-                    
-                    
-                
-                
+
+
+                var bgmAdjust = (1.0 / soundspeed) / (1.0 / framerate);
+                srcFreq = ((int)(srcFreq * bgmAdjust));
+
+
+
+
             }
-            if((int)srcFreq != dstFreq)
+            if ((int)srcFreq != dstFreq)
             {
                 return pcmResampleNearestNeighbour(srcPcm, srcFreq, dstFreq);
             }
             return srcPcm;
-            
+
         }
 
         /// <summary>
@@ -165,9 +163,9 @@ namespace PPMLib
             var srcSize = src.Length;
             var dstSize = dst.Length;
 
-            for(int i = 0; i < srcSize; i++)
+            for (int i = 0; i < srcSize; i++)
             {
-                if(dstOffset + i > dstSize)
+                if (dstOffset + i > dstSize)
                 {
                     break;
                 }
@@ -177,12 +175,13 @@ namespace PPMLib
                 {
                     samp = dst[dstOffset + i] + (src[i] / 2);
                     dst[dstOffset + i] = (short)Utils.NumClamp(samp, -32768, 32767);
-                } catch (Exception e)
+                }
+                catch (Exception e)
                 {
 
                 }
-                
-                
+
+
             }
             return dst;
         }
@@ -196,8 +195,8 @@ namespace PPMLib
         /// <returns>Signed 16-bit PCM audio</returns>
         public short[] getAudioMasterPcm(int dstFreq)
         {
-            var dstSize = Math.Ceiling((double)timeGetNoteDuration(Flipnote.FrameCount, Flipnote.Framerate) * dstFreq);
-            var master = new short[(int)dstSize];
+            var dstSize = (int)Math.Ceiling(timeGetNoteDuration(Flipnote.FrameCount, Flipnote.Framerate) * dstFreq);
+            var master = new short[dstSize + 1];
             var hasBgm = Flipnote.Audio.SoundHeader.BGMTrackSize > 0;
             var hasSe1 = Flipnote.Audio.SoundHeader.SE1TrackSize > 0;
             var hasSe2 = Flipnote.Audio.SoundHeader.SE2TrackSize > 0;
@@ -210,33 +209,33 @@ namespace PPMLib
                 master = pcmAudioMix(bgmPcm, master, 0);
             }
 
-            if(hasSe1 || hasSe2 || hasSe3)
+            if (hasSe1 || hasSe2 || hasSe3)
             {
                 var samplesPerFrame = dstFreq / Flipnote.Framerate;
                 var se1Pcm = hasSe1 ? getAudioTrackPcm(dstFreq, PPMAudioTrack.SE1) : null;
                 var se2Pcm = hasSe1 ? getAudioTrackPcm(dstFreq, PPMAudioTrack.SE2) : null;
                 var se3Pcm = hasSe1 ? getAudioTrackPcm(dstFreq, PPMAudioTrack.SE3) : null;
                 var seFlags = Flipnote.SoundEffectFlags;
-                for(int i = 0; i < Flipnote.FrameCount; i++)
+                for (int i = 0; i < Flipnote.FrameCount; i++)
                 {
                     var seOffset = (int)Math.Ceiling(i * samplesPerFrame);
                     var flag = seFlags[i];
-                    if(hasSe1 && flag == 1)
+                    if (hasSe1 && flag == 1)
                     {
                         master = pcmAudioMix(se1Pcm, master, seOffset);
                     }
-                    if(hasSe2 && flag == 2)
+                    if (hasSe2 && flag == 2)
                     {
                         master = pcmAudioMix(se2Pcm, master, seOffset);
                     }
-                    if(hasSe3 && flag == 4)
+                    if (hasSe3 && flag == 4)
                     {
                         master = pcmAudioMix(se3Pcm, master, seOffset);
                     }
                 }
             }
 
-            
+
             return master;
         }
 
@@ -246,9 +245,9 @@ namespace PPMLib
         /// <param name="frameCount"></param>
         /// <param name="framerate"></param>
         /// <returns></returns>
-        public int timeGetNoteDuration(int frameCount, double framerate)
+        public double timeGetNoteDuration(int frameCount, double framerate)
         {
-            return (int)((frameCount * 100) * (1 / framerate)) / 100;
+            return ((frameCount * 100) * (1 / framerate)) / 100;
         }
 
         /// <summary>
@@ -282,7 +281,7 @@ namespace PPMLib
             var dstLength = srcDuration * dstFreq;
             var dst = new short[(int)dstLength];
             var adjFreq = srcFreq / dstFreq;
-            for(var dstPtr = 0; dstPtr < dstLength; dstPtr++)
+            for (var dstPtr = 0; dstPtr < dstLength; dstPtr++)
             {
                 dst[dstPtr] = pcmGetSample(src, srcLength, (int)Math.Floor((double)(dstPtr * adjFreq)));
             }

@@ -12,7 +12,7 @@ namespace PPMLib
         internal byte[] _linesEncoding = new byte[48];
         public LineEncoding LinesEncoding(int lineIndex)
             => (LineEncoding)((_linesEncoding[lineIndex >> 2] >> ((lineIndex & 0x3) << 1)) & 0x3);
-        
+
         public void setLinesEncoding(int lineIndex, LineEncoding value)
         {
             int o = lineIndex >> 2;

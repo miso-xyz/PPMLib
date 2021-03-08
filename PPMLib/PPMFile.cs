@@ -70,6 +70,7 @@ namespace PPMLib
 
             // Read Sound Data
             if (SoundDataSize == 0) return;
+
             offset = 0x6A0 + AnimationDataSize;
             br.BaseStream.Seek(offset, SeekOrigin.Begin);
             SoundEffectFlags = new byte[Frames.Length];
@@ -78,7 +79,7 @@ namespace PPMLib
             {
                 SoundEffectFlags[i] = br.ReadByte();
             }
-            offset += Frames.Length;            
+            offset += Frames.Length;
 
             // make the next offset dividable by 4
             br.ReadBytes((int)((4 - offset % 4) % 4));
@@ -102,7 +103,7 @@ namespace PPMLib
             Audio.SoundData.RawSE1 = br.ReadBytes((int)Audio.SoundHeader.SE1TrackSize);
             Audio.SoundData.RawSE2 = br.ReadBytes((int)Audio.SoundHeader.SE2TrackSize);
             Audio.SoundData.RawSE3 = br.ReadBytes((int)Audio.SoundHeader.SE3TrackSize);
-            
+
             // Read Signature (Will implement later)
             if (br.BaseStream.Position == br.BaseStream.Length)
             {
@@ -112,6 +113,7 @@ namespace PPMLib
             {
                 // Next 0x80 bytes = RSA-1024 SHA-1 signature
                 Signature = br.ReadBytes(0x80);
+                var padding = br.ReadBytes(0x10);
                 // Next 0x10 bytes are filled with 0
             }
 

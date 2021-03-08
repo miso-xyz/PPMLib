@@ -77,7 +77,7 @@ namespace PPMLib
             Marshal.Copy(IPtr, bytes, 0, 256 * 192);
             for (var y = 0; y < 192; y++)
             {
-                for (var x = 0; x < 256; x++) 
+                for (var x = 0; x < 256; x++)
                 {
                     if (frame.Layer1[y, x])
                     {

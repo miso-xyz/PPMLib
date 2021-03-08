@@ -37,7 +37,7 @@ namespace PPMLib.Extensions
             frame.Layer1._linesEncoding = br.ReadBytes(0x30);
             frame.Layer2._linesEncoding = br.ReadBytes(0x30);
 
-            for (int y = 0, yy; y < 192; y++) 
+            for (int y = 0, yy; y < 192; y++)
             {
                 yy = y << 5;
                 switch (frame.Layer1.LinesEncoding(y))
@@ -51,10 +51,10 @@ namespace PPMLib.Extensions
                         while (bytes != 0)
                         {
                             if ((bytes & 0x80000000) != 0)
-                                frame.Layer1._layerData[yy] = br.ReadByte();                                                           
+                                frame.Layer1._layerData[yy] = br.ReadByte();
                             bytes <<= 1;
                             yy++;
-                        }                        
+                        }
                         break;
                     case (LineEncoding)2:
                         for (int x = 0; x < 32; x++) frame.Layer1._layerData[yy + x] = 0xFF;
@@ -66,15 +66,15 @@ namespace PPMLib.Extensions
                                 frame.Layer1._layerData[yy] = br.ReadByte();
                             bytes <<= 1;
                             yy++;
-                        }                        
+                        }
                         break;
                     case (LineEncoding)3:
                         for (int x = 0; x < 32; x++)
-                            frame.Layer1._layerData[yy + x] = br.ReadByte();                        
+                            frame.Layer1._layerData[yy + x] = br.ReadByte();
                         break;
                 }
             }
-            for (int y = 0,yy; y < 192; y++) 
+            for (int y = 0, yy; y < 192; y++)
             {
                 yy = y << 5;
                 switch (frame.Layer2.LinesEncoding(y))
@@ -91,7 +91,7 @@ namespace PPMLib.Extensions
                                 frame.Layer2._layerData[yy] = br.ReadByte();
                             bytes <<= 1;
                             yy++;
-                        }                        
+                        }
                         break;
                     case (LineEncoding)2:
                         for (int x = 0; x < 32; x++) frame.Layer2._layerData[yy + x] = 0xFF;
@@ -103,15 +103,15 @@ namespace PPMLib.Extensions
                                 frame.Layer2._layerData[yy] = br.ReadByte();
                             bytes <<= 1;
                             yy++;
-                        }                        
+                        }
                         break;
                     case (LineEncoding)3:
                         for (int x = 0; x < 32; x++)
-                            frame.Layer2._layerData[yy + x] = br.ReadByte();                        
+                            frame.Layer2._layerData[yy + x] = br.ReadByte();
                         break;
                 }
             }
             return frame;
-        }        
+        }
     }
 }

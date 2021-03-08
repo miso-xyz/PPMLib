@@ -34,14 +34,14 @@ namespace PPMLib
             int pi = 0, ld = 0;
             if (tX >= 0)
             {
-                for (ushort y = 0; y < 192; y++) 
+                for (ushort y = 0; y < 192; y++)
                 {
                     if (y < tY) continue;
                     if (y - tY >= 192) break;
                     ld = ((y << 5) + ld0);
                     pi = (((y - tY) << 5) + pi0);
                     Layer1._layerData[ld] ^= (byte)(frame.Layer1._layerData[pi] & alpha);
-                    Layer2._layerData[ld++] ^= (byte)(frame.Layer2._layerData[pi] & alpha);                    
+                    Layer2._layerData[ld++] ^= (byte)(frame.Layer2._layerData[pi] & alpha);
                     while ((ld & 31) < 31)
                     {
                         Layer1._layerData[ld] ^= (byte)(((frame.Layer1._layerData[pi] & nalpha) >> ndel) | ((frame.Layer1._layerData[pi + 1] & alpha) << del));
@@ -56,7 +56,7 @@ namespace PPMLib
             }
             else
             {
-                for (ushort y = 0; y < 192; y++) 
+                for (ushort y = 0; y < 192; y++)
                 {
                     if (y < tY) continue;
                     if (y - tY >= 192) break;
@@ -65,7 +65,7 @@ namespace PPMLib
                     while ((pi & 31) < 31)
                     {
                         Layer1._layerData[ld] ^= (byte)(((frame.Layer1._layerData[pi] & nalpha) >> ndel) | ((frame.Layer1._layerData[pi + 1] & alpha) << del));
-                        Layer2._layerData[ld] ^= (byte)(((frame.Layer2._layerData[pi] & nalpha) >> ndel) | ((frame.Layer2._layerData[pi + 1] & alpha) << del));                        
+                        Layer2._layerData[ld] ^= (byte)(((frame.Layer2._layerData[pi] & nalpha) >> ndel) | ((frame.Layer2._layerData[pi + 1] & alpha) << del));
                         ld++; pi++;
                     }
                     Layer1._layerData[ld] ^= (byte)(frame.Layer1._layerData[pi] & nalpha);

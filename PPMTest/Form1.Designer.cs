@@ -34,6 +34,7 @@
             this.FrameViewer = new System.Windows.Forms.PictureBox();
             this.NextFrameButton = new System.Windows.Forms.Button();
             this.PlayButton = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.Thumbnail)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.FrameViewer)).BeginInit();
             this.SuspendLayout();
@@ -100,11 +101,22 @@
             this.PlayButton.UseVisualStyleBackColor = true;
             this.PlayButton.Click += new System.EventHandler(this.PlayButton_Click);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(33, 328);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 6;
+            this.button1.Text = "Export Mp4";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.PlayButton);
             this.Controls.Add(this.NextFrameButton);
             this.Controls.Add(this.FrameViewer);
@@ -128,6 +140,7 @@
         private System.Windows.Forms.PictureBox FrameViewer;
         private System.Windows.Forms.Button NextFrameButton;
         private System.Windows.Forms.Button PlayButton;
+        private System.Windows.Forms.Button button1;
     }
 }
 
