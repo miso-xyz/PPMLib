@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
-namespace PPMLib
+namespace PPMLib.Winforms
 {
     public static class PPMRenderer
     {
@@ -72,12 +72,12 @@ namespace PPMLib
             var rect = new Rectangle(0, 0, 256, 192);
             var bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
 
-            byte[] bytes = new byte[256 * 192];
+            byte[] bytes = new byte[(256 * 192) + 1];
             var IPtr = bmpData.Scan0;
             Marshal.Copy(IPtr, bytes, 0, 256 * 192);
-            for (var y = 0; y < 192; y++)
+            for (var y = 0; y <= 191; y++)
             {
-                for (var x = 0; x < 256; x++) 
+                for (var x = 0; x <= 255; x++)
                 {
                     if (frame.Layer1[y, x])
                     {
