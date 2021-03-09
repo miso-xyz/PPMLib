@@ -1,5 +1,4 @@
-﻿//INSTANT C# NOTE: Formerly VB project-level imports:
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace PPMLib
 {
@@ -12,6 +11,11 @@ namespace PPMLib
         public LineEncoding LinesEncoding(int lineIndex)
             => (LineEncoding)((_linesEncoding[lineIndex >> 2] >> ((lineIndex & 0x3) << 1)) & 0x3);
 
+        /// <summary>
+        /// Apply a line encoding value to a line of pixels
+        /// </summary>
+        /// <param name="lineIndex">Line Index</param>
+        /// <param name="value">Line Encoding to apply onto the line</param>
         public void setLinesEncoding(int lineIndex, LineEncoding value)
         {
             int o = lineIndex >> 2;
@@ -21,8 +25,14 @@ namespace PPMLib
             b = (byte)(b | (byte)((int)value << pos));
             _linesEncoding[o] = b;
         }
+
         #region Line-Related Functions
-        public LineEncoding SetLineEncodingForWholeLayer(int index)
+        /// <summary>
+        /// Set the line encoding for the whole layer
+        /// </summary>
+        /// <param name="index">Line Index</param>
+        /// <returns>New encoding type for the line</returns>
+        public LineEncoding SetLineEncodingForWholeLayer(int index) // Set?
         {
             var _0chks = 0;
             var _1chks = 0;
@@ -58,7 +68,13 @@ namespace PPMLib
                 return ((_0chks > _1chks) ? LineEncoding.CodedLine : LineEncoding.InvertedCodedLine);
             }
         }
-        private void InsertLineInLayer(List<byte> lineData, int index, int layerIndex)
+
+        /// <summary>
+        /// Insert a line in current layer
+        /// </summary>
+        /// <param name="lineData">Line Data</param>
+        /// <param name="index">Index Of Line</param>
+        private void InsertLineInLayer(List<byte> lineData, int index)
         {
             List<byte> chks = new List<byte>();
             switch (LinesEncoding(index))
@@ -113,6 +129,10 @@ namespace PPMLib
             }
         }
         #endregion
+
+        /// <summary>
+        /// Set the visibility of the layer
+        /// </summary>
         public bool Visible
         {
             get

@@ -1,5 +1,4 @@
-﻿//INSTANT C# NOTE: Formerly VB project-level imports:
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -16,7 +15,12 @@ namespace PPMLib
         public byte _firstByteHeader;
         public int _translateX;
         public int _translateY;
-        public void Overwrite(PPMFrame frame)
+
+        /// <summary>
+        /// Overwrite frame data
+        /// </summary>
+        /// <param name="frame">Frame data to apply</param>
+        public void Overwrite(PPMFrame frame) // Just use current frame
         {
             if ((_firstByteHeader & 0x80) != 0)
             {
@@ -68,8 +72,7 @@ namespace PPMLib
                     Layer2[ld] ^= (byte)(frame.Layer2[pi] & nalpha);
                 }
             }
-        }       
-
+        }
         public PPMLayer Layer1
         {
             get

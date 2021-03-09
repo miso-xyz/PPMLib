@@ -1,5 +1,4 @@
-﻿//INSTANT C# NOTE: Formerly VB project-level imports:
-using System;
+﻿using System;
 
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -9,7 +8,15 @@ namespace PPMLib.Winforms
 {
     public static class PPMRenderer
     {
+        /// <summary>
+        /// Color pallete used when rendering the thumbnail
+        /// </summary>
         public static readonly Color[] ThumbnailPalette = { Color.FromArgb(unchecked((int)0xFFFFFFFF)), Color.FromArgb(unchecked((int)0xFF525252)), Color.FromArgb(unchecked((int)0xFFFFFFFF)), Color.FromArgb(unchecked((int)0xFF9C9C9C)), Color.FromArgb(unchecked((int)0xFFFF4844)), Color.FromArgb(unchecked((int)0xFFC8514F)), Color.FromArgb(unchecked((int)0xFFFFADAC)), Color.FromArgb(unchecked((int)0xFF00FF00)), Color.FromArgb(unchecked((int)0xFF4840FF)), Color.FromArgb(unchecked((int)0xFF514FB8)), Color.FromArgb(unchecked((int)0xFFADABFF)), Color.FromArgb(unchecked((int)0xFF00FF00)), Color.FromArgb(unchecked((int)0xFFB657B7)), Color.FromArgb(unchecked((int)0xFF00FF00)), Color.FromArgb(unchecked((int)0xFF00FF00)), Color.FromArgb(unchecked((int)0xFF00FF00)) };
+
+        /// <summary>
+        /// Converts the flipnote's thumbnail to Bitmap
+        /// </summary>
+        /// <param name="buffer">Raw Thumbnail Bytes</param>
         public static Bitmap GetThumbnailBitmap(byte[] buffer)
         {
             if (buffer.Length != 1536)
@@ -56,8 +63,16 @@ namespace PPMLib.Winforms
             return bmp;
         }
 
+        /// <summary>
+        /// All colors available for frames
+        /// </summary>
         public static readonly Color[] FramePalette = { Color.FromArgb(unchecked((int)0xFF000000)), Color.FromArgb(unchecked((int)0xFFFFFFFF)), Color.FromArgb(unchecked((int)0xFFFF0000)), Color.FromArgb(unchecked((int)0xFF0000FF)) };
 
+        /// <summary>
+        /// Renders the given frame to a Bitmap
+        /// </summary>
+        /// <param name="frame">Frame Data</param>
+        /// <returns>Rendered Frame</returns>
         public static Bitmap GetFrameBitmap(PPMFrame frame)
         {
             var bmp = new Bitmap(256, 192, PixelFormat.Format8bppIndexed);

@@ -5,11 +5,19 @@ namespace PPMLib
 {
     public class PPMFilename
     {
+        /// <summary>
+        /// Set the filename of the flipnote
+        /// </summary>
+        /// <param name="bytes">New filename</param>
         public PPMFilename(byte[] bytes)
         {
             Buffer = bytes;
         }
 
+        /// <summary>
+        /// Set the filename of the flipnote
+        /// </summary>
+        /// <param name="fn">New filename</param>
         public PPMFilename(string fn)
         {
             if (fn.Length != 24)

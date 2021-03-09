@@ -7,12 +7,19 @@ namespace PPMLib
 {
     public class PPMFile
     {
-        //private static 
-        public void LoadFromFile(string path)
+        /// <summary>
+        /// Read file as a flipnote
+        /// </summary>
+        /// <param name="path">Path to Flipnote</param>
+        public void LoadFrom(string path) //private static
         {
             Parse(File.ReadAllBytes(path));
         }
 
+        /// <summary>
+        /// Parse a flipnote's raw bytes
+        /// </summary>
+        /// <param name="bytes">Raw Flipnote Bytes</param>
         public void Parse(byte[] bytes)
         {
             var br = new BinaryReader(new MemoryStream(bytes));
@@ -123,7 +130,7 @@ namespace PPMLib
         private uint[] _animationOffset;
         public uint AnimationDataSize { get; private set; }
         public uint SoundDataSize { get; private set; }
-        public ushort FrameCount { get; private set; }
+        public ushort FrameCount { get; private set; } // we should just use Frames.Count() instead
         public ushort FormatVersion { get; private set; }
         public bool IsLocked { get; private set; }
         public ushort ThumbnailFrameIndex { get; private set; }
