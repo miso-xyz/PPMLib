@@ -11,7 +11,7 @@ We will not provide the private key required to sign flipnotes, you will have to
 </pre>
 
 # Notes
-- We remind Section 4.1.5 from Sudomemo Terms of Use: *``` The following activities are prohibited when using Sudomemo: [...] Exploits or content that wasn’t created in the original Flipnote Studio software on a Nintendo DSi or Nintendo 3DS```*. We are not related to any modified versions of PPMLib which attempt to break Sudomemo's Terms Of Use, we will try our best to not have anything as such happen.
+- We remind Section 4.1.5 from Sudomemo Terms of Use: *``` The following activities are prohibited when using Sudomemo: [...] Exploits or content that wasn’t created in the original Flipnote Studio software on a Nintendo DSi or Nintendo 3DS```*. We are not related to any modified versions of PPMLib which attempt to break Sudomemo's Terms Of Use, we will try our best to not have anything as such happen. (Flipnotes edited with the original PPMLib Library will have oddities to prevent uploads onto Sudomemo)
 
 # Latest Changelog
 (No releases will be made until a stable version of PPMLib is published)
