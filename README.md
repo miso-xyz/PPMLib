@@ -39,6 +39,6 @@ This project would not have seen the light of day without the help of the follow
 - <a href="https://github.com/miso-xyz">Misonothx - Miso</a> | Mainly worked on metadata reading & minimal stuff such as descriptions
 
 Special Thanks
-- Triangle (MKDS Hacking Server) - Came up with the idea
-- XGone (MKDS Hacking Server)
+- Triangle (MKDS Modding Server) - Came up with the idea
+- XGone (MKDS Modding Server)
 </pre>
