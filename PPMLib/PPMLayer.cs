@@ -7,8 +7,7 @@ namespace PPMLib
     {
         private PenColor _pen;
         private bool _visibility;
-        internal byte[] _layerData = new byte[32 * 192];
-        //public bool[,] _layerData = new bool[192, 256];
+        internal byte[] _layerData = new byte[32 * 192];        
         internal byte[] _linesEncoding = new byte[48];
         public LineEncoding LinesEncoding(int lineIndex)
             => (LineEncoding)((_linesEncoding[lineIndex >> 2] >> ((lineIndex & 0x3) << 1)) & 0x3);
@@ -124,12 +123,13 @@ namespace PPMLib
             {
                 _visibility = value;
             }
-        }
-        /*public bool this[int y, int x]
+        }     
+
+        public byte this[int p]
         {
-            get => _layerData[y, x];
-            set => _layerData[y, x] = value;
-        }*/
+            get => _layerData[p];
+            set => _layerData[p] = value;
+        }
 
         public bool this[int y, int x]
         {
