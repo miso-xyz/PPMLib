@@ -8,6 +8,9 @@ This library can be used to read & write flipnotes, application such as players 
 
 We will not provide the private key required to sign flipnotes, you will have to find it online or get the key yourself.
 
+# Notes
+- We remind Section 4.1.5 from Sudomemo Terms of Use: *``` The following activities are prohibited when using Sudomemo: [...] Exploits or content that wasn’t created in the original Flipnote Studio software on a Nintendo DSi or Nintendo 3DS```*. We are not related to any modified versions of PPMLib which attempt to break Sudomemo's Terms Of Use, we will try our best to not have anything as such happen.
+
 # Latest Changelog
 (No releases will be made until a stable version of PPMLib is published)
 
@@ -25,9 +28,6 @@ v0.3a:
 
 # Problems
   - Emojis are currently not working in author names
-
-# Notes
-- This is a library, we are not responsible for any tools using PPMLib that does not follow Sudomemo's TOS or sum idk, I'm just not responsible for what you do with PPMLib. We remind Section 4.1.5 from Sudomemo Terms of Use: *``` The following activities are prohibited when using Sudomemo: [...] Exploits or content that wasn’t created in the original Flipnote Studio software on a Nintendo DSi or Nintendo 3DS```*. Plus, animating on a DS is much more fun :). We will try our best to prevent any third-party edits to appear which breaks Sudomemo's TOS.
 
 # Credits
 This project would not have seen the light of day without the help of the following people, please support them!
