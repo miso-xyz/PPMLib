@@ -1,4 +1,4 @@
-**(This branch is been kept for archive reasons)**
+**(This branch is being kept for archive reasons)**
 # PPMLib
 (Revived) .NET Library to edit Flipnotes
 
