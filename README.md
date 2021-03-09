@@ -1,5 +1,4 @@
 # PPMLib
-(Revived) .NET Library to edit Flipnotes
 
 **_Important_:** *Please check the notes below before using this software.*
 
