@@ -4,6 +4,7 @@ using PPMLib.Encoders;
 using System;
 using System.IO;
 using System.Media;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace PPMTest
@@ -28,7 +29,7 @@ namespace PPMTest
         public void LoadPPM(string fn)
         {
             ppm = new PPMFile();
-            ppm.LoadFromFile(System.IO.Path.Combine(Path, fn));
+            ppm.LoadFrom(System.IO.Path.Combine(Path, fn));
             Props.SelectedObject = ppm;
             Thumbnail.Image = PPMLib.Winforms.PPMRenderer.GetThumbnailBitmap(ppm.Thumbnail.Buffer);
             fcnt = 0;            
@@ -70,8 +71,8 @@ namespace PPMTest
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var mp4 = new Mp4Encoder(ppm);
-            mp4.EncodeMp4("C:/Users/finti/Desktop/EncodedFlipnotes", 2);
+            var mp4 = new Mp3Encoder(ppm);
+            mp4.EncodeMp3("C:/Users/finti/Desktop/EncodedFlipnotes");
         }
     }
 }

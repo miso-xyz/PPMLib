@@ -134,14 +134,8 @@ namespace PPMLib.Extensions
 
             if (track == PPMAudioTrack.BGM)
             {
-
-
                 var bgmAdjust = (1.0 / soundspeed) / (1.0 / framerate);
                 srcFreq = ((int)(srcFreq * bgmAdjust));
-
-
-
-
             }
             if ((int)srcFreq != dstFreq)
             {
@@ -180,8 +174,6 @@ namespace PPMLib.Extensions
                 {
 
                 }
-
-
             }
             return dst;
         }

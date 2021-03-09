@@ -1,4 +1,4 @@
-﻿using NAudio.Wave;
+﻿
 using PPMLib.Extensions;
 using System;
 using System.IO;
@@ -22,12 +22,13 @@ namespace PPMLib
         /// Returns Null if no audio exists.
         /// </summary>
         /// <param name="flip"></param>
+        /// <param name="sampleRate"></param>
         /// <returns>Signed 16-bit PCM audio</returns>
-        public byte[] GetWavBGM(PPMFile flip)
+        public byte[] GetWavBGM(PPMFile flip, int sampleRate = 32768)
         {
             // start decoding
             AdpcmDecoder encoder = new AdpcmDecoder(flip);
-            var decoded = encoder.getAudioMasterPcm(32768);
+            var decoded = encoder.getAudioMasterPcm(sampleRate);
             if(decoded.Length > 0)
             {
                 byte[] output = new byte[decoded.Length];
@@ -46,17 +47,10 @@ namespace PPMLib
                     }
                     
                 }
-
-                
-
-                var provider = new RawSourceWaveStream(new MemoryStream(output), new WaveFormat(32768 / 2, 16, 1));
-                var a = new MemoryStream();
-                WaveFileWriter.WriteWavFileToStream(a, provider);
-                return a.ToArray();
+                var a = new WavePcmFormat(output, 1, (uint)(sampleRate / 2), 16);
+                return a.ToBytesArray();
             }
             return null;
-            
-
         }
 
     }
