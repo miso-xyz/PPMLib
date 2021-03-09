@@ -1,42 +1,44 @@
 # PPMLib
-(Revived) .NET Library to edit Flipnotes
 
 **_Important_:** *Please check the notes below before using this software.*
 
-PS: This project uses a lot of code from FlipnoteDesktop, it has been converted to VB.NET and optimised. Thanks to [NotImplementedLife](https://github.com/NotImplementedLife) for his help with this project aswell as making FlipnoteDesktop.
+(this is the VB.NET version, this version is currently less stable than the C# version available on the `C#-Latest` branch)
 
-No releases will be made until a stable version of PPMLib is published.
+<pre>
+This library can be used to read & write flipnotes, application such as players or exporters can be made with this library
 
-# Changelog
-v0.2a:
-```
-- Can now sign (private key will not be given), however no editing features have been implemented yet
-- Frame & thumbnail rendering are still in their early stages (frames currently still cannot render, thumbnails however appear broken)
-- Imporvements in the properties placements
-```
-
-# Currently Able
-- Metadata
-  - Get Current Author
-  - Get Current Author ID
-  - Get Current Filename
-  - Get "Locked?"
-  - Get Last-Edited Frame Index
-  - Get "Loop Flipnote?"
-  - Get OffsetTableSize
-  - Get Parent Author
-  - Get Parent Author ID
-  - Get Parent Filename
-  - Get Playback Speed
-  - Get Root Author
-  - Get Root Filename Fragments
-  - Get Thumbnail Frame Index
-  - Get Timestamp
-  - Get Total Frames
-  
-# Problems
-- Cannot render frames or thumbnail
-- Cannot process frames metadata
+We will not provide the private key required to sign flipnotes, you will have to find it online or get the key yourself.
+</pre>
 
 # Notes
-- This is a library, not responsible for any tools using PPMLib that does not follow Sudomemo's TOS or sum idk, im just not responsible for what you do with PPMLib. We remind Section 4.1.1 from Sudomemo Terms of Use: *``` The following activities are prohibited when using Sudomemo: Exploits or content that wasn’t created in the original Flipnote Studio software on a Nintendo DSi or Nintendo 3DS```*. Plus, animating on a DS is much more fun :) . That's all
+- We remind Section 4.1.5 from Sudomemo Terms of Use: *``` The following activities are prohibited when using Sudomemo: [...] Exploits or content that wasn’t created in the original Flipnote Studio software on a Nintendo DSi or Nintendo 3DS```*. We are not related to any modified versions of PPMLib which attempt to break Sudomemo's Terms Of Use, we will try our best to not have anything as such happen. (Flipnotes edited with the original PPMLib Library will have oddities to prevent uploads onto Sudomemo)
+
+# Latest Changelog
+(No releases will be made until a stable version of PPMLib is published)
+
+v0.3a:
+<pre>
+- Restructured Library
+- Added Audio Decoding (working!)
+- Author's names are Unicode-compatible thanks to the explanation provided by <a href="https://github.com/Sudomemo/Sudofont">Sudofont</a> [may be buggy]
+</pre>
+
+# Working On
+  - Frame Rendering
+  - Audio Replay
+  - Ease-of-use
+
+# Problems
+  - Emojis are currently not working in author names
+
+# Credits
+This project would not have seen the light of day without the help of the following people, please support them!
+<pre>
+- <a href="https://github.com/NotImplementedLife">NotImplementedLife - Nil</a> | Author of FlipnoteDesktop, Helped a bunch with frame rendering & metadata reading
+- <a href="https://github.com/RinLovesYou">RinLovesYou - Rin</a> | Author of <a href="https://github.com/RinLovesYou/Flipnote-Encoder">Flipnote-Encoder</a>, Helped a bunch with frame rendering & sound reading
+- <a href="https://github.com/miso-xyz">Misonothx - Miso</a> | Mainly worked on metadata reading & minimal stuff such as descriptions
+
+Special Thanks
+- Triangle (MKDS Hacking Server) - Came up with the idea
+- XGone (MKDS Hacking Server)
+</pre>
