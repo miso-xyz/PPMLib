@@ -126,6 +126,16 @@ namespace PPMLib
 
         }
 
+        public void DumpBGMData(string filename)        
+            => File.WriteAllBytes(filename, Audio.SoundData.RawBGM);
+        public void DumpSE1Data(string filename)
+            => File.WriteAllBytes(filename, Audio.SoundData.RawSE1);
+        public void DumpSE2Data(string filename)
+            => File.WriteAllBytes(filename, Audio.SoundData.RawSE2);
+        public void DumpSE3Data(string filename)
+            => File.WriteAllBytes(filename, Audio.SoundData.RawSE3);
+
+
         internal static readonly char[] FileMagic = new char[4] { 'P', 'A', 'R', 'A' };
         private uint[] _animationOffset;
         public uint AnimationDataSize { get; private set; }

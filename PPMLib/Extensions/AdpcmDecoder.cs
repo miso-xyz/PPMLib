@@ -170,7 +170,7 @@ namespace PPMLib.Extensions
                     samp = dst[dstOffset + i] + (src[i] / 2);
                     dst[dstOffset + i] = (short)Utils.NumClamp(samp, -32768, 32767);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
 
                 }

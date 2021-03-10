@@ -3,8 +3,7 @@
 namespace PPMLib
 {
     public class PPMLayer
-    {
-        private PenColor _pen;
+    {        
         private bool _visibility;
         internal byte[] _layerData = new byte[32 * 192];        
         internal byte[] _linesEncoding = new byte[48];

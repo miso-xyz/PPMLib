@@ -41,7 +41,7 @@ namespace PPMLib
                         output[i] = (byte)(decoded[i + 1] & 0xff);
                         output[i + 1] = (byte)(decoded[i] >> 8);
                     }
-                    catch(Exception e)
+                    catch(Exception)
                     {
 
                     }

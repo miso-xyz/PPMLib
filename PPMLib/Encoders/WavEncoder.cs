@@ -96,7 +96,7 @@ namespace PPMLib.Encoders
 
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Cleanup();
                 return null;
@@ -117,7 +117,7 @@ namespace PPMLib.Encoders
                 {
                     File.Delete(file);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     // idk yet
                 }
