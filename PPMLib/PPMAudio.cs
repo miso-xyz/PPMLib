@@ -14,7 +14,8 @@ namespace PPMLib
 
         public PPMAudio()
         {
-
+            SoundHeader = new _SoundHeader();
+            SoundData = new _SoundData();
         }
 
         /// <summary>

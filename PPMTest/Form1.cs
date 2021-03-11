@@ -3,6 +3,7 @@ using PPMLib;
 using PPMLib.Encoders;
 using System;
 using System.IO;
+using System.Linq;
 using System.Media;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -12,8 +13,8 @@ namespace PPMTest
     public partial class Form1 : Form
     {
 
-        public static readonly string Path = @"D:\Archive\Files\Nintendo\NDS\flash\R4wood\flipnotes";
-        //public static readonly string Path = @"C:\Users\finti\Desktop\";
+        //public static readonly string Path = @"D:\Archive\Files\Nintendo\NDS\flash\R4wood\flipnotes";
+        public static readonly string Path = @"C:\Users\finti\Desktop\";
 
         public PPMFile ppm;
         public Form1()
@@ -71,8 +72,12 @@ namespace PPMTest
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var mp4 = new Mp3Encoder(ppm);
-            mp4.EncodeMp3("C:/Users/finti/Desktop/EncodedFlipnotes");
+            //var mp4 = new Mp3Encoder(ppm);
+            //mp4.EncodeMp3("C:/Users/finti/Desktop/EncodedFlipnotes");
+
+            PPMFile aaa = new PPMFile();
+            aaa.Create(ppm.CurrentAuthor.Name, ppm.CurrentAuthor.Id, ppm.Frames.ToList(), ppm.Audio.SoundData.RawBGM, false);
+            aaa.Save($"out/{aaa.CurrentFilename}.ppm");
         }
     }
 }

@@ -1,12 +1,19 @@
 ﻿using PPMLib.Extensions;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace PPMLib
 {
     public class PPMFile
     {
+
+        public bool Signed { get; set; }
+
         /// <summary>
         /// Read file as a flipnote
         /// </summary>
@@ -125,6 +132,299 @@ namespace PPMLib
             }
 
         }
+
+        public void Create(string authorName, ulong authorId, List<PPMFrame> frames, byte[] audio, bool ignoreMetadata = false)
+        {
+            FrameCount = (ushort)(frames.Count - 1);
+            FormatVersion = 0x24;
+            
+            if (!ignoreMetadata)
+            {
+                RootAuthor = new PPMAuthor(authorName, authorId);
+                ParentAuthor = new PPMAuthor(authorName, authorId);
+                CurrentAuthor = new PPMAuthor(authorName, authorId);
+
+                string mac6 = string.Join("", BitConverter.GetBytes(authorId).Take(3).Reverse().Select(t => t.ToString("X2")));
+                var asm = Assembly.GetEntryAssembly().GetName().Version;
+                var dt = DateTime.UtcNow;
+                var fnVM = ((byte)asm.Major).ToString("X2");
+                var fnVm = ((byte)asm.Minor).ToString("X2");
+                var fnYY = (byte)(dt.Year - 2009);
+                var fnMD = dt.Month * 32 + dt.Day;
+                var fnTi = (((dt.Hour * 3600 + dt.Minute * 60 + dt.Second) % 4096) >> 1) + (fnMD > 255 ? 1 : 0);
+                fnMD = (byte)fnMD;
+                var fnYMD = (fnYY << 9) + fnMD;
+                var H6_9 = fnYMD.ToString("X4");
+                var H89 = ((byte)fnMD).ToString("X2");
+                var HABC = fnTi.ToString("X3");
+
+                string _13str = $"80{fnVM}{fnVm}{H6_9}{HABC}";
+                string nEdited = 0.ToString().PadLeft(3, '0');
+                var filename = $"{mac6}_{_13str}_{nEdited}.ppm";
+
+
+                var rawfn = new byte[18];
+                for (int i = 0; i < 3; i++)
+                {
+                    rawfn[i] = byte.Parse("" + mac6[2 * i] + mac6[2 * i + 1], System.Globalization.NumberStyles.HexNumber);
+                }
+                for (int i = 3; i < 16; i++)
+                {
+                    rawfn[i] = (byte)_13str[i - 3];
+                }
+                rawfn[16] = rawfn[17] = 0;
+
+                ParentFilename = new PPMFilename(rawfn);
+                CurrentFilename = new PPMFilename(rawfn);
+
+                var ByteRootFileFragment = new byte[8];
+                for (int i = 0; i < 3; i++)
+                {
+                    ByteRootFileFragment[i] =
+                        byte.Parse("" + mac6[2 * i] + mac6[2 * i + 1], System.Globalization.NumberStyles.HexNumber);
+                }
+                for (int i = 3; i < 8; i++)
+                {
+                    ByteRootFileFragment[i] =
+                        (byte)((byte.Parse("" + _13str[2 * (i - 3)], System.Globalization.NumberStyles.HexNumber) << 4)
+                              + byte.Parse("" + _13str[2 * (i - 3) + 1], System.Globalization.NumberStyles.HexNumber));
+                }
+
+                RootFileFragment = new PPMFileFragment(ByteRootFileFragment);
+
+                Timestamp = new PPMTimestamp((uint)((dt - new DateTime(2000, 1, 1, 0, 0, 0)).TotalSeconds));
+                Thumbnail = new PPMThumbnail(new byte[0x600]);
+                ThumbnailFrameIndex = 0;
+            }
+            // write the audio data
+
+            uint animDataSize = (uint)(8 + 4 * frames.Count);
+
+            FrameOffsetTableSize = (ushort)(4 * frames.Count);
+            AnimationFlags = BitConverter.ToUInt16(BitConverter.GetBytes(0x00430000), 0);
+
+            Frames = new PPMFrame[frames.Count];
+            //SoundEffectFlags = new byte[frames.Count];
+
+            for (int i = 0; i < frames.Count; i++)
+            {
+
+                Frames[i] = frames[i];
+
+
+                animDataSize += (uint)Frames[i].ToByteArray().Length;
+            }
+            while ((animDataSize & 0x3) != 0) animDataSize++;
+            AnimationDataSize = animDataSize;
+
+            Audio = new PPMAudio();
+            Audio.SoundData.RawBGM = audio;
+            Audio.SoundHeader.BGMTrackSize = (uint)Audio.SoundData.RawBGM.Length;
+            Audio.SoundHeader.SE1TrackSize = 0;
+            Audio.SoundHeader.SE2TrackSize = 0;
+            Audio.SoundHeader.SE2TrackSize = 0;
+            SoundDataSize = (uint)Audio.SoundData.RawBGM.Length;
+
+            Audio.SoundHeader.CurrentFramespeed = 0;
+            Audio.SoundHeader.RecordingBGMFramespeed = 0;
+            
+        }
+
+        public void Save(string fn)
+        {
+            using (var w = new BinaryWriter(new FileStream(fn, FileMode.Create)))
+            {
+                //AnimationDataSize = (uint)(AnimationDataSize + 8 + Frames.Count() * 4);
+                //var AllignSize = (uint)(4 - ((0x6A0 + AnimationDataSize + Frames.Count()) % 4));
+                //if (AllignSize != 4)
+                //    AnimationDataSize += AllignSize;
+                w.Write(FileMagic);
+                w.Write(AnimationDataSize);
+                w.Write(SoundDataSize);
+                w.Write(FrameCount);
+                w.Write((ushort)0x0024);
+                w.Write(IsLocked);
+                w.Write(ThumbnailFrameIndex);
+                w.Write(Encoding.Unicode.GetBytes(RootAuthor.Name.PadRight(11, '\0')));
+                w.Write(Encoding.Unicode.GetBytes(ParentAuthor.Name.PadRight(11, '\0')));
+                w.Write(Encoding.Unicode.GetBytes(CurrentAuthor.Name.PadRight(11, '\0')));
+                w.Write(ParentAuthor.Id);
+                w.Write(CurrentAuthor.Id);
+                w.Write(ParentFilename.Buffer);
+                w.Write(CurrentFilename.Buffer);
+                w.Write(RootAuthor.Id);
+                w.Write(RootFileFragment.Buffer);
+                w.Write(Timestamp.Value);
+                w.Write((ushort)0); //0x009E
+                w.Write(Thumbnail.Buffer);
+
+                w.Write(FrameOffsetTableSize);
+                w.Write((ushort)0); // 0x06A2
+                w.Write(AnimationFlags);
+
+                // Calculate frame offsets & write frame data
+                List<byte[]> lst = new List<byte[]>();
+                uint offset = 0;
+                for (int i = 0; i < Frames.Length; i++)
+                {
+                    lst.Add(Frames[i].ToByteArray());
+                    w.Write(offset);
+                    offset += (uint)lst[i].Length;
+                }
+
+                for (int i = 0; i < Frames.Length; i++)
+                {
+                    w.Write(lst[i]);
+                }
+
+                w.Write(new byte[(4 - w.BaseStream.Position % 4) % 4]);
+
+                // Write sound data
+                for (int i = 0; i < Frames.Length; i++)
+                    w.Write((byte)0);
+
+                //if (AllignSize != 4)
+                //    w.Write(new byte[AllignSize]);
+                w.Write(new byte[(4 - w.BaseStream.Position % 4) % 4]);
+                // make the next offset dividable by 4;
+                w.Write(Audio.SoundData.RawBGM.Length); // BGM
+                w.Write((uint)0); // SE1
+                w.Write((uint)0); // SE2
+                w.Write((uint)0); // SE3
+                //w.Write(new byte[(4 - w.BaseStream.Position % 4) % 4]);
+                w.Write(Audio.SoundHeader.CurrentFramespeed); // Frame speed
+                w.Write(Audio.SoundHeader.RecordingBGMFramespeed); //BGM speed
+                w.Write(new byte[14]);
+
+
+                //write the actual BGM
+                w.Write(Audio.SoundData.RawBGM);
+
+                using (var ms = new MemoryStream())
+                {
+                    var p = w.BaseStream.Position;
+                    w.BaseStream.Seek(0, SeekOrigin.Begin);
+                    w.BaseStream.CopyTo(ms);
+                    w.BaseStream.Seek(p, SeekOrigin.Begin);
+                    //sign if you can
+                    if (File.Exists("fnkey.pem"))
+                    {
+                        try
+                        {
+                            w.Write(ComputeSignature(ms.ToArray()));
+                            Signed = true;
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message + "\n" + e.StackTrace);
+                            Signed = false;
+                        }
+
+
+                    }
+                    else
+                    {
+                        //placeholder key
+                        w.Write(new byte[0x80]);
+                        Signed = false;
+                    }
+                }
+                w.Write(new byte[0x10]);
+
+            }
+        }
+
+        /// <summary>
+        /// Generates the RSA SHA-1 signature for the file data passed as parameter
+        /// </summary>
+        /// <remarks>
+        /// The private key is not contained in this package. Good luck in googling 
+        /// it by yourself. Once you have it, place it in a file named "fnkey.pem"
+        /// in the root directory.
+        /// </remarks>
+        /// <param name="data">The PPM binary data</param>      
+        /// <returns>a 144-sized byte array.</returns>
+        public static byte[] ComputeSignature(byte[] data)
+        {
+            var privkey = File.ReadAllText("fnkey.pem")
+                .Replace("-----BEGIN RSA PRIVATE KEY-----", "")
+                .Replace("-----END RSA PRIVATE KEY-----", "")
+                .Replace(System.Environment.NewLine, "");
+            var rsa = CreateRsaProviderFromPrivateKey(privkey);
+            var hash = new SHA1CryptoServiceProvider().ComputeHash(data);
+            return rsa.SignHash(hash, CryptoConfig.MapNameToOID("SHA1"));
+        }
+
+        // https://stackoverflow.com/questions/14644926/use-pem-encoded-rsa-private-key-in-net                     
+        private static RSACryptoServiceProvider CreateRsaProviderFromPrivateKey(string privateKey)
+        {
+            var privkeybytes = Convert.FromBase64String(privateKey);
+            var rsa = new RSACryptoServiceProvider();
+            var RSAparams = new RSAParameters();
+            using (BinaryReader r = new BinaryReader(new MemoryStream(privkeybytes)))
+            {
+                byte bt = 0;
+                ushort twobytes = 0;
+                twobytes = r.ReadUInt16();
+                if (twobytes == 0x8130)
+                    r.ReadByte();
+                else if (twobytes == 0x8230)
+                    r.ReadInt16();
+                else
+                    throw new Exception("Unexpected format");
+
+                twobytes = r.ReadUInt16();
+                if (twobytes != 0x0102)
+                    throw new Exception("Unexpected version");
+
+                bt = r.ReadByte();
+                if (bt != 0x00)
+                    throw new Exception("Unexpected format");
+
+                RSAparams.Modulus = r.ReadBytes(GetIntegerSize(r));
+                RSAparams.Exponent = r.ReadBytes(GetIntegerSize(r));
+                RSAparams.D = r.ReadBytes(GetIntegerSize(r));
+                RSAparams.P = r.ReadBytes(GetIntegerSize(r));
+                RSAparams.Q = r.ReadBytes(GetIntegerSize(r));
+                RSAparams.DP = r.ReadBytes(GetIntegerSize(r));
+                RSAparams.DQ = r.ReadBytes(GetIntegerSize(r));
+                RSAparams.InverseQ = r.ReadBytes(GetIntegerSize(r));
+            }
+
+            rsa.ImportParameters(RSAparams);
+            return rsa;
+        }
+
+        private static int GetIntegerSize(BinaryReader r)
+        {
+            byte bt = 0;
+            byte lowbyte = 0x00;
+            byte highbyte = 0x00;
+            int count = 0;
+            bt = r.ReadByte();
+            if (bt != 0x02)
+                return 0;
+            bt = r.ReadByte();
+            if (bt == 0x81)
+                count = r.ReadByte();
+            else
+                if (bt == 0x82)
+            {
+                highbyte = r.ReadByte();
+                lowbyte = r.ReadByte();
+                byte[] modint = { lowbyte, highbyte, 0x00, 0x00 };
+                count = BitConverter.ToInt32(modint, 0);
+            }
+            else
+                count = bt;
+            while (r.ReadByte() == 0x00)
+                count--;
+            r.BaseStream.Seek(-1, SeekOrigin.Current);
+            return count;
+        }
+
+
+
 
         public void DumpBGMData(string filename)        
             => File.WriteAllBytes(filename, Audio.SoundData.RawBGM);
