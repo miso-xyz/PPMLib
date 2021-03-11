@@ -133,16 +133,17 @@ namespace PPMLib
 
         }
 
-        public void Create(string authorName, ulong authorId, List<PPMFrame> frames, byte[] audio, bool ignoreMetadata = false)
+        public static PPMFile Create(string authorName, ulong authorId, List<PPMFrame> frames, byte[] audio, bool ignoreMetadata = false)
         {
-            FrameCount = (ushort)(frames.Count - 1);
-            FormatVersion = 0x24;
+            var file = new PPMFile();
+            file.FrameCount = (ushort)(frames.Count - 1);
+            file.FormatVersion = 0x24;
             
             if (!ignoreMetadata)
             {
-                RootAuthor = new PPMAuthor(authorName, authorId);
-                ParentAuthor = new PPMAuthor(authorName, authorId);
-                CurrentAuthor = new PPMAuthor(authorName, authorId);
+                file.RootAuthor = new PPMAuthor(authorName, authorId);
+                file.ParentAuthor = new PPMAuthor(authorName, authorId);
+                file.CurrentAuthor = new PPMAuthor(authorName, authorId);
 
                 string mac6 = string.Join("", BitConverter.GetBytes(authorId).Take(3).Reverse().Select(t => t.ToString("X2")));
                 var asm = Assembly.GetEntryAssembly().GetName().Version;
@@ -174,8 +175,8 @@ namespace PPMLib
                 }
                 rawfn[16] = rawfn[17] = 0;
 
-                ParentFilename = new PPMFilename(rawfn);
-                CurrentFilename = new PPMFilename(rawfn);
+                file.ParentFilename = new PPMFilename(rawfn);
+                file.CurrentFilename = new PPMFilename(rawfn);
 
                 var ByteRootFileFragment = new byte[8];
                 for (int i = 0; i < 3; i++)
@@ -190,44 +191,46 @@ namespace PPMLib
                               + byte.Parse("" + _13str[2 * (i - 3) + 1], System.Globalization.NumberStyles.HexNumber));
                 }
 
-                RootFileFragment = new PPMFileFragment(ByteRootFileFragment);
+                file.RootFileFragment = new PPMFileFragment(ByteRootFileFragment);
 
-                Timestamp = new PPMTimestamp((uint)((dt - new DateTime(2000, 1, 1, 0, 0, 0)).TotalSeconds));
-                Thumbnail = new PPMThumbnail(new byte[0x600]);
-                ThumbnailFrameIndex = 0;
+                file.Timestamp = new PPMTimestamp((uint)((dt - new DateTime(2000, 1, 1, 0, 0, 0)).TotalSeconds));
+                file.Thumbnail = new PPMThumbnail(new byte[0x600]);
+                file.ThumbnailFrameIndex = 0;
             }
             // write the audio data
 
             uint animDataSize = (uint)(8 + 4 * frames.Count);
 
-            FrameOffsetTableSize = (ushort)(4 * frames.Count);
-            AnimationFlags = BitConverter.ToUInt16(BitConverter.GetBytes(0x00430000), 0);
+            file.AnimationFlags = 0x43;
+            file.FrameOffsetTableSize = (ushort)(4 * frames.Count);
+            file.AnimationFlags = BitConverter.ToUInt16(BitConverter.GetBytes(0x00430000), 0);
 
-            Frames = new PPMFrame[frames.Count];
+            file.Frames = new PPMFrame[frames.Count];
             //SoundEffectFlags = new byte[frames.Count];
 
             for (int i = 0; i < frames.Count; i++)
             {
 
-                Frames[i] = frames[i];
+                file.Frames[i] = frames[i];
 
 
-                animDataSize += (uint)Frames[i].ToByteArray().Length;
+                animDataSize += (uint)file.Frames[i].ToByteArray().Length;
             }
             while ((animDataSize & 0x3) != 0) animDataSize++;
-            AnimationDataSize = animDataSize;
+            file.AnimationDataSize = animDataSize;
 
-            Audio = new PPMAudio();
-            Audio.SoundData.RawBGM = audio;
-            Audio.SoundHeader.BGMTrackSize = (uint)Audio.SoundData.RawBGM.Length;
-            Audio.SoundHeader.SE1TrackSize = 0;
-            Audio.SoundHeader.SE2TrackSize = 0;
-            Audio.SoundHeader.SE2TrackSize = 0;
-            SoundDataSize = (uint)Audio.SoundData.RawBGM.Length;
+            file.Audio = new PPMAudio();
+            file.Audio.SoundData.RawBGM = audio;
+            file.Audio.SoundHeader.BGMTrackSize = (uint)file.Audio.SoundData.RawBGM.Length;
+            file.Audio.SoundHeader.SE1TrackSize = 0;
+            file.Audio.SoundHeader.SE2TrackSize = 0;
+            file.Audio.SoundHeader.SE2TrackSize = 0;
+            file.SoundDataSize = (uint)file.Audio.SoundData.RawBGM.Length;
 
-            Audio.SoundHeader.CurrentFramespeed = 0;
-            Audio.SoundHeader.RecordingBGMFramespeed = 0;
-            
+            file.Audio.SoundHeader.CurrentFramespeed = 0;
+            file.Audio.SoundHeader.RecordingBGMFramespeed = 0;
+
+            return file;
         }
 
         public void Save(string fn)
@@ -243,7 +246,7 @@ namespace PPMLib
                 w.Write(SoundDataSize);
                 w.Write(FrameCount);
                 w.Write((ushort)0x0024);
-                w.Write(IsLocked);
+                w.Write((ushort)(IsLocked ? 1 : 0));
                 w.Write(ThumbnailFrameIndex);
                 w.Write(Encoding.Unicode.GetBytes(RootAuthor.Name.PadRight(11, '\0')));
                 w.Write(Encoding.Unicode.GetBytes(ParentAuthor.Name.PadRight(11, '\0')));
@@ -259,7 +262,7 @@ namespace PPMLib
                 w.Write(Thumbnail.Buffer);
 
                 w.Write(FrameOffsetTableSize);
-                w.Write((ushort)0); // 0x06A2
+                w.Write((uint)0); // 0x06A2
                 w.Write(AnimationFlags);
 
                 // Calculate frame offsets & write frame data
@@ -268,6 +271,7 @@ namespace PPMLib
                 for (int i = 0; i < Frames.Length; i++)
                 {
                     lst.Add(Frames[i].ToByteArray());
+                    //MessageBox.Show(offset.ToString());
                     w.Write(offset);
                     offset += (uint)lst[i].Length;
                 }
