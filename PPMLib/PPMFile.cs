@@ -133,7 +133,7 @@ namespace PPMLib
 
         }
 
-        public static PPMFile Create(string authorName, ulong authorId, List<PPMFrame> frames, byte[] audio, bool ignoreMetadata = false)
+        public static PPMFile Create(PPMAuthor author, List<PPMFrame> frames, byte[] audio, bool ignoreMetadata = false)
         {
             var file = new PPMFile();
             file.FrameCount = (ushort)(frames.Count - 1);
@@ -141,11 +141,11 @@ namespace PPMLib
             
             if (!ignoreMetadata)
             {
-                file.RootAuthor = new PPMAuthor(authorName, authorId);
-                file.ParentAuthor = new PPMAuthor(authorName, authorId);
-                file.CurrentAuthor = new PPMAuthor(authorName, authorId);
+                file.RootAuthor = author;
+                file.ParentAuthor = author;
+                file.CurrentAuthor = author;
 
-                string mac6 = string.Join("", BitConverter.GetBytes(authorId).Take(3).Reverse().Select(t => t.ToString("X2")));
+                string mac6 = string.Join("", BitConverter.GetBytes(author.Id).Take(3).Reverse().Select(t => t.ToString("X2")));
                 var asm = Assembly.GetEntryAssembly().GetName().Version;
                 var dt = DateTime.UtcNow;
                 var fnVM = ((byte)asm.Major).ToString("X2");
@@ -248,9 +248,9 @@ namespace PPMLib
                 w.Write((ushort)0x0024);
                 w.Write((ushort)(IsLocked ? 1 : 0));
                 w.Write(ThumbnailFrameIndex);
-                w.Write(Encoding.Unicode.GetBytes(RootAuthor.Name.PadRight(11, '\0')));
-                w.Write(Encoding.Unicode.GetBytes(ParentAuthor.Name.PadRight(11, '\0')));
-                w.Write(Encoding.Unicode.GetBytes(CurrentAuthor.Name.PadRight(11, '\0')));
+                w.Write(Encoding.Unicode.GetBytes(RootAuthor._Name.PadRight(11, '\0')));
+                w.Write(Encoding.Unicode.GetBytes(ParentAuthor._Name.PadRight(11, '\0')));
+                w.Write(Encoding.Unicode.GetBytes(CurrentAuthor._Name.PadRight(11, '\0')));
                 w.Write(ParentAuthor.Id);
                 w.Write(CurrentAuthor.Id);
                 w.Write(ParentFilename.Buffer);

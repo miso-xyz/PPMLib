@@ -75,7 +75,7 @@ namespace PPMTest
             //var mp4 = new Mp3Encoder(ppm);
             //mp4.EncodeMp3("C:/Users/finti/Desktop/EncodedFlipnotes");
 
-            PPMFile aaa = PPMFile.Create(ppm.CurrentAuthor.Name, ppm.CurrentAuthor.Id, ppm.Frames.ToList(), ppm.Audio.SoundData.RawBGM);
+            PPMFile aaa = PPMFile.Create(ppm.CurrentAuthor, ppm.Frames.ToList(), ppm.Audio.SoundData.RawBGM);
             aaa.Save($"{aaa.CurrentFilename}.ppm");
         }
 

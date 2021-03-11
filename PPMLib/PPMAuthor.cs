@@ -11,7 +11,7 @@ namespace PPMLib
             Id = id;
         }
 
-        private string _Name;
+        internal string _Name;
         public string Name { get => ToUnicode(); }
         public ulong Id { get; }
 
