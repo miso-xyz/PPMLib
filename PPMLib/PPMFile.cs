@@ -202,8 +202,7 @@ namespace PPMLib
             uint animDataSize = (uint)(8 + 4 * frames.Count);
 
             file.AnimationFlags = 0x43;
-            file.FrameOffsetTableSize = (ushort)(4 * frames.Count);
-            file.AnimationFlags = BitConverter.ToUInt16(BitConverter.GetBytes(0x00430000), 0);
+            file.FrameOffsetTableSize = (ushort)(4 * frames.Count);            
 
             file.Frames = new PPMFrame[frames.Count];
             //SoundEffectFlags = new byte[frames.Count];
@@ -263,6 +262,7 @@ namespace PPMLib
 
                 w.Write(FrameOffsetTableSize);
                 w.Write((uint)0); // 0x06A2
+                System.Diagnostics.Debug.WriteLine(AnimationFlags);
                 w.Write(AnimationFlags);
 
                 // Calculate frame offsets & write frame data

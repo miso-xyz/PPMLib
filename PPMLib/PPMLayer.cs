@@ -29,20 +29,20 @@ namespace PPMLib
         /// <summary>
         /// Set the line encoding for the whole layer
         /// </summary>
-        /// <param name="index">Line Index</param>
+        /// <param name="y">Line Index</param>
         /// <returns>New encoding type for the line</returns>
-        public LineEncoding SetLineEncodingForWholeLayer(int index) // Set?
+        public LineEncoding SetLineEncodingForWholeLayer(int y) // Set?
         {
             var _0chks = 0;
             var _1chks = 0;
             for (var x = 0; x <= 32; x++)
             {
-                var c = 8 * index;
+                var c = 8 * y;
                 var n0 = 0;
                 var n1 = 0;
                 for (var x_ = 0; x_ <= 8; x_++)
                 {
-                    if (this[index, c + x_])
+                    if (this[c + x_, y])
                     {
                         n1 += 1;
                     }
@@ -72,11 +72,11 @@ namespace PPMLib
         /// Insert a line in current layer
         /// </summary>
         /// <param name="lineData">Line Data</param>
-        /// <param name="index">Index Of Line</param>
-        private void InsertLineInLayer(List<byte> lineData, int index)
+        /// <param name="y">Index Of Line</param>
+        private void InsertLineInLayer(List<byte> lineData, int y)
         {
             List<byte> chks = new List<byte>();
-            switch (LinesEncoding(index))
+            switch (LinesEncoding(y))
             {
                 case 0:
                     {
@@ -91,12 +91,12 @@ namespace PPMLib
                             byte chunk = 0;
                             for (var x_ = 0; x_ <= 8; x_++)
                             {
-                                if (this[index, 8 * x + x_])
+                                if (this[8 * x + x_, y]) 
                                 {
                                     chunk = (byte)(chunk | (byte)(1 << x_));
                                 }
                             }
-                            if (chunk != ((LinesEncoding(index) == (PPMLib.LineEncoding)1) ? 0x0 : 0xFF))
+                            if (chunk != ((LinesEncoding(y) == (PPMLib.LineEncoding)1) ? 0x0 : 0xFF))
                             {
                                 flag |= (1U << (31 - x));
                                 chks.Add(chunk);
@@ -116,7 +116,7 @@ namespace PPMLib
                             byte chunk = 0;
                             for (var x_ = 0; x_ <= 8; x_++)
                             {
-                                if (this[index, 8 * x + x_])
+                                if (this[8 * x + x_, y]) 
                                 {
                                     chunk = (byte)(chunk | (byte)(1 << x_));
                                 }
@@ -150,7 +150,7 @@ namespace PPMLib
             set => _layerData[p] = value;
         }
 
-        public bool this[int y, int x]
+        public bool this[int x, int y]
         {
             get
             {

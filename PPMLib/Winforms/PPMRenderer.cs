@@ -94,7 +94,7 @@ namespace PPMLib.Winforms
             {
                 for (var x = 0; x <= 255; x++)
                 {
-                    if (frame.Layer1[y, x])
+                    if (frame.Layer1[x, y]) 
                     {
                         if (frame.Layer1.PenColor != PenColor.Inverted)
                         {
@@ -107,7 +107,7 @@ namespace PPMLib.Winforms
                     }
                     else
                     {
-                        if (frame.Layer2[y, x])
+                        if (frame.Layer2[x, y]) 
                         {
                             if (frame.Layer2.PenColor != PenColor.Inverted)
                             {

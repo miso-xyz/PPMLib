@@ -33,9 +33,9 @@ using System.Diagnostics; using System.Drawing;  namespace PPMLib {   
             return res.ToArray();
         }
 
-        private void L1PutLine(List<byte> lst, int ln)
+        private void L1PutLine(List<byte> lst, int y)
         {
-            int compr = (int)Layer1.LinesEncoding(ln);
+            int compr = (int)Layer1.LinesEncoding(y);
             if (compr == 0) return;
             if (compr == 1)
             {
@@ -45,7 +45,7 @@ using System.Diagnostics; using System.Drawing;  namespace PPMLib {   
                 {
                     byte chunk = 0;
                     for (int j = 0; j < 8; j++)
-                        if (Layer1[ln, 8 * i + j])
+                        if (Layer1[8 * i + j, y]) 
                             chunk |= (byte)(1 << j);
                     if (chunk != 0x00)
                     {
@@ -68,7 +68,7 @@ using System.Diagnostics; using System.Drawing;  namespace PPMLib {   
                 {
                     byte chunk = 0;
                     for (int j = 0; j < 8; j++)
-                        if (Layer1[ln, 8 * i + j])
+                        if (Layer1[8 * i + j, y]) 
                             chunk |= (byte)(1 << j);
                     if (chunk != 0xFF)
                     {
@@ -90,7 +90,7 @@ using System.Diagnostics; using System.Drawing;  namespace PPMLib {   
                     byte chunk = 0;
                     for (int j = 0; j < 8; j++)
                     {
-                        if (Layer1[ln, 8 * i + j])
+                        if (Layer1[8 * i + j, y]) 
                             chunk |= (byte)(1 << j);
                     }
                     lst.Add(chunk);
@@ -99,9 +99,9 @@ using System.Diagnostics; using System.Drawing;  namespace PPMLib {   
             }
         }
 
-        private void L2PutLine(List<byte> lst, int ln)
+        private void L2PutLine(List<byte> lst, int y)
         {
-            int compr = (int)Layer2.LinesEncoding(ln);
+            int compr = (int)Layer2.LinesEncoding(y);
             if (compr == 0) return;
             if (compr == 1)
             {
@@ -111,7 +111,7 @@ using System.Diagnostics; using System.Drawing;  namespace PPMLib {   
                 {
                     byte chunk = 0;
                     for (int j = 0; j < 8; j++)
-                        if (Layer2[ln, 8 * i + j])
+                        if (Layer2[8 * i + j, y]) 
                             chunk |= (byte)(1 << j);
                     if (chunk != 0x00)
                     {
@@ -134,7 +134,7 @@ using System.Diagnostics; using System.Drawing;  namespace PPMLib {   
                 {
                     byte chunk = 0;
                     for (int j = 0; j < 8; j++)
-                        if (Layer2[ln, 8 * i + j])
+                        if (Layer2[8 * i + j, y]) 
                             chunk |= (byte)(1 << j);
                     if (chunk != 0xFF)
                     {
@@ -156,7 +156,7 @@ using System.Diagnostics; using System.Drawing;  namespace PPMLib {   
                     byte chunk = 0;
                     for (int j = 0; j < 8; j++)
                     {
-                        if (Layer2[ln, 8 * i + j])
+                        if (Layer2[8 * i + j, y]) 
                             chunk |= (byte)(1 << j);
                     }
                     lst.Add(chunk);

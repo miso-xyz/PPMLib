@@ -97,7 +97,7 @@ namespace PPMLib.WPF
             {
                 for (int y = 0; y < 192; y++)
                 {
-                    if (frame.Layer1[y, x]) 
+                    if (frame.Layer1[x, y]) 
                     {
                         int b = 256 * y + x;
                         int p = 3 - b % 4;
@@ -111,7 +111,7 @@ namespace PPMLib.WPF
             {
                 for (int y = 0; y < 192; y++)
                 {
-                    if (frame.Layer2[y, x])
+                    if (frame.Layer2[x, y]) 
                     {
                         int b = 256 * y + x;
                         int p = 3 - b % 4;
