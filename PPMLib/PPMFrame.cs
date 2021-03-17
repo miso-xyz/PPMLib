@@ -6,10 +6,15 @@ using System.Diagnostics; using System.Drawing;  namespace PPMLib {   
             frame._firstByteHeader = _firstByteHeader;
             frame._firstByteHeader &= 0b00011111;
             frame._firstByteHeader |= 0x80;
-            for (int i = 0; i < 256 * 192; i++)
+            for (int i = 0; i < 32 * 192; i++) 
             {
                 frame.Layer1[i] = (byte)(Layer1[i] ^ prev.Layer1[i]);
                 frame.Layer2[i] = (byte)(Layer2[i] ^ prev.Layer2[i]);
+            }
+            for(int y=0;y<192;y++)
+            {
+                frame.Layer1.SetLineEncoding(y, frame.Layer1.ChooseLineEncoding(y));
+                frame.Layer2.SetLineEncoding(y, frame.Layer1.ChooseLineEncoding(y));
             }
             // > TO DO : update line encodings
             return frame;
@@ -26,6 +31,11 @@ using System.Diagnostics; using System.Drawing;  namespace PPMLib {   
         {
             var res = new List<byte>();
             res.Add(_firstByteHeader);
+            for (int l = 0; l < 192; l++)
+            {
+                Layer1.SetLineEncoding(l, Layer1.ChooseLineEncoding(l));
+                Layer2.SetLineEncoding(l, Layer2.ChooseLineEncoding(l));
+            }
             res.AddRange(Layer1._linesEncoding);
             res.AddRange(Layer2._linesEncoding);
             for (int l = 0; l < 192; L1PutLine(res, l++)) ;

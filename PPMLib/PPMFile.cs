@@ -270,6 +270,11 @@ namespace PPMLib
                 uint offset = 0;
                 for (int i = 0; i < Frames.Length; i++)
                 {
+                    /*if(i>0)
+                    {
+                        Frames[i].CreateDiff0(Frames[i - 1]);
+                    }*/
+                    Frames[i]._firstByteHeader |= 0x80;
                     lst.Add(Frames[i].ToByteArray());
                     //MessageBox.Show(offset.ToString());
                     w.Write(offset);

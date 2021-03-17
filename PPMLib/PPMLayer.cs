@@ -15,7 +15,7 @@ namespace PPMLib
         /// </summary>
         /// <param name="lineIndex">Line Index</param>
         /// <param name="value">Line Encoding to apply onto the line</param>
-        public void setLinesEncoding(int lineIndex, LineEncoding value)
+        public void SetLineEncoding(int lineIndex, LineEncoding value)
         {
             int o = lineIndex >> 2;
             int pos = (lineIndex & 0x3) * 2;
@@ -31,41 +31,21 @@ namespace PPMLib
         /// </summary>
         /// <param name="y">Line Index</param>
         /// <returns>New encoding type for the line</returns>
-        public LineEncoding SetLineEncodingForWholeLayer(int y) // Set?
+        public LineEncoding ChooseLineEncoding(int y)
         {
             var _0chks = 0;
             var _1chks = 0;
-            for (var x = 0; x <= 32; x++)
+            int i = 32 * y;
+            for (var b = 0; b < 32; b++) 
             {
-                var c = 8 * y;
-                var n0 = 0;
-                var n1 = 0;
-                for (var x_ = 0; x_ <= 8; x_++)
-                {
-                    if (this[c + x_, y])
-                    {
-                        n1 += 1;
-                    }
-                    else
-                    {
-                        n0 += 1;
-                    }
-                }
-                _0chks += (n0 == 8) ? 1 : 0;
-                _1chks += (n1 == 8) ? 1 : 0;
+                _0chks += (this[i] == 0x00) ? 1 : 0;
+                _1chks += (this[i++] == 0xFF) ? 1 : 0;
             }
-            if (_0chks == 32)
-            {
+            if (_0chks == 32)            
                 return LineEncoding.SkipLine;
-            }
-            else if (_0chks == ((_1chks == 0) ? -1 : 0))
-            {
-                return LineEncoding.RawLineData;
-            }
-            else
-            {
-                return ((_0chks > _1chks) ? LineEncoding.CodedLine : LineEncoding.InvertedCodedLine);
-            }
+            if (_0chks == 0 && _1chks == 1)             
+                return LineEncoding.RawLineData;                        
+            return ((_0chks > _1chks) ? LineEncoding.CodedLine : LineEncoding.InvertedCodedLine);            
         }
 
         /// <summary>
