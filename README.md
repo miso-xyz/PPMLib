@@ -35,7 +35,7 @@ v0.3a:
 This project would not have seen the light of day without the help of the following people, please support them!
 <pre>
 - <a href="https://github.com/NotImplementedLife">NotImplementedLife - Nil</a> | Author of <a href="https://github.com/NotImplementedLife/Flipnote.NET">Flipnote.NET</a> (formely known as FlipnoteDesktop), Helped a bunch with frame rendering & metadata reading
-- <a href="https://github.com/RinLovesYou">RinLovesYou - Rin</a> | Author of <a href="https://github.com/RinLovesYou/Flipnote-Encoder">Flipnote-Encoder</a>, Helped a bunch with frame rendering & sound reading
+- <a href="https://github.com/RinLovesYou">RinLovesYou - Rin</a> | Author of <a href="https://github.com/RinLovesYou/Flipnote-Encoder">Flipnote-Encoder</a> & <a href=https://github.com/RinLovesYou/LinuxNote>LinuxNote</a>, Helped a bunch with frame rendering & sound reading
 - <a href="https://github.com/miso-xyz">Misonothx - Miso</a> | Mainly worked on metadata reading & minimal stuff such as descriptions
 
 Special Thanks
